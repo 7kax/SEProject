@@ -1,5 +1,40 @@
-# Vue 3 + TypeScript + Vite
+# 软件工程化开发项目前端部分
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## 项目简介
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+本项目基于Vue3 + TypeScript + Vite开发, 使用npm管理依赖, 在使用本项目前请确保已安装node.js和npm
+
+## 项目启动
+
+1. 安装依赖
+```shell
+npm install
+```
+
+2. 启动项目
+```shell
+npm run dev
+```
+
+3. 打包项目
+```shell
+npm run build
+```
+
+## 项目结构
+
+```
+.
+├── public          // 静态资源
+├── src
+│   ├── assets      // 静态资源
+│   ├── components  // 公共组件
+│   ├── router      // 路由配置
+│   ├── stores      // 状态管理
+│   ├── views       // 页面
+│   ├── App.vue     // 根组件
+|   ├── style.css   // 全局样式
+│   └── main.ts     // 入口文件
+├── .gitignore
+├── package.json    // 依赖配置
+```
