@@ -13,6 +13,7 @@
             <button type="submit">Login</button>
         </form>
     </div>
+    <button type="button" @click="redirectToRegister">Register</button>
 </template>
 
 <script lang="ts" setup>
@@ -30,9 +31,19 @@ const handleLogin = () => {
 
         // Redirect to the home page
         window.location.href = '/';
+    } else if (username.value === 'user' && password.value === 'password') {
+        // Suppose the login is successful
+        authStore.login({ username: username.value, uid: '456' });
+
+        // Redirect to the home page
+        window.location.href = '/';
     } else {
         alert('Invalid username or password');
     }
+};
+
+const redirectToRegister = () => {
+    window.location.href = '/register';
 };
 </script>
 

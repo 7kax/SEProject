@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
+import Register from '../views/Register.vue';
+import Profile from '../views/Profile.vue';
+import Admin from '../views/Admin.vue';
 import { useAuthStore } from '../stores/auth';
 
 const routes: Array<RouteRecordRaw> = [
@@ -21,6 +24,29 @@ const routes: Array<RouteRecordRaw> = [
         path: '/login',
         name: 'Login',
         component: Login
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: Register
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: Profile,
+    },
+    {
+        path: '/admin',
+        name: 'Admin',
+        component: Admin,
+        beforeEnter: (to, from, next) => {
+            const authStore = useAuthStore();
+            if (!authStore.checkLoginStatus() || !authStore.isAdmin) {
+                next('/login');
+            } else {
+                next();
+            }
+        }
     }
 ];
 
