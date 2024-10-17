@@ -1,64 +1,76 @@
 <template>
     <div class="register-container">
-        <h1>Register</h1>
+        <h1>注册</h1>
         <form @submit.prevent="handleRegister">
             <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" v-model="username" placeholder="Enter your username" required />
+                <label for="username">用户名:</label>
+                <input type="text" v-model="username" placeholder="输入用户名" required />
             </div>
             <div class="form-group">
-                <label for="uid">UID:</label>
-                <input type="text" v-model="uid" placeholder="Enter your UID" required />
+                <label for="uid">学号/工号:</label>
+                <input type="text" v-model="sjnumber" placeholder="输入学号/工号" required />
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" v-model="password" placeholder="Enter your password" required />
+                <label for="password">密码:</label>
+                <input type="password" v-model="password" placeholder="输入密码" required />
             </div>
             <div class="form-group">
-                <label for="confirmPassword">Confirm Password:</label>
-                <input type="password" v-model="confirmPassword" placeholder="Confirm your password" required />
+                <label for="confirmPassword">确认密码:</label>
+                <input type="password" v-model="confirmPassword" placeholder="确认密码" required />
             </div>
-            <button type="submit" class="btn-primary">Register</button>
+            <button type="submit" class="btn-primary">注册</button>
         </form>
-        <button @click="redirectToLogin" class="btn-secondary">Return to Login</button>
+        <button @click="redirectToLogin" class="btn-secondary">返回登录页面</button>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { emptyString } from '../utils/func';
 
 const username = ref('');
-const uid = ref('');
+const sjnumber = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 
 const handleRegister = () => {
     const illegalChars = /[!@#\$%\^\&*\)\(+=._-]+/g;
 
-    if (!username.value.trim()) {
-        alert('Username cannot be empty');
+    // if (!username.value.trim()) {
+    //     alert('Username cannot be empty');
+    //     return;
+    // }
+    // if (!uid.value.trim()) {
+    //     alert('UID cannot be empty');
+    //     return;
+    // }
+    if (emptyString(username.value, '用户名')) {
         return;
     }
-    if (!uid.value.trim()) {
-        alert('UID cannot be empty');
+    if (emptyString(sjnumber.value, '学号/工号')) {
         return;
     }
 
+
     if (illegalChars.test(username.value)) {
-        alert('Username contains illegal characters');
+        // alert('Username contains illegal characters');
+        alert('用户名包含非法字符');
         return;
     }
-    if (illegalChars.test(uid.value)) {
-        alert('UID contains illegal characters');
+    if (illegalChars.test(sjnumber.value)) {
+        // alert('UID contains illegal characters');
+        alert('学号/工号包含非法字符');
         return;
     }
 
     if (password.value !== confirmPassword.value) {
-        alert('Passwords do not match');
+        // alert('Passwords do not match');
+        alert('密码不匹配');
         return;
     }
 
-    alert('Registration successful!');
+    // alert('Registration successful!');
+    alert('注册成功!');
 };
 
 const redirectToLogin = () => {

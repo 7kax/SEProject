@@ -1,36 +1,35 @@
 <template>
     <div class="login-container">
-        <h2>Login</h2>
+        <h2>登录</h2>
         <form @submit.prevent="handleLogin">
             <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" v-model="username" placeholder="Enter your username" required />
+                <label for="username">用户名:</label>
+                <input type="text" v-model="username" placeholder="输入用户名" required />
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" v-model="password" placeholder="Enter your password" required />
+                <label for="password">密码:</label>
+                <input type="password" v-model="password" placeholder="输入密码" required />
             </div>
-            <button type="submit" class="btn-primary">Login</button>
+            <button type="submit" class="btn-primary">登录</button>
         </form>
-        <button type="button" class="btn-secondary" @click="redirectToRegister">Register</button>
+        <button type="button" class="btn-secondary" @click="redirectToRegister">注册</button>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import { emptyString } from '../utils/func';
 
 const authStore = useAuthStore();
 const username = ref('');
 const password = ref('');
 
 const handleLogin = () => {
-    if (!username.value.trim()) {
-        alert('Username cannot be empty');
+    if (emptyString(username.value, '用户名')) {
         return;
     }
-    if (!password.value.trim()) {
-        alert('Password cannot be empty');
+    if (emptyString(password.value, '密码')) {
         return;
     }
 
