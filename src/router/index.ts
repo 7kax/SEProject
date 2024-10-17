@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/',
         name: 'Home',
         component: Home,
-        beforeEnter: (to, from, next) => {
+        beforeEnter: (_to, _from, next) => {
             const authStore = useAuthStore();
             if (!authStore.checkLoginStatus()) {
                 next('/login');
@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/admin',
         name: 'Admin',
         component: Admin,
-        beforeEnter: (to, from, next) => {
+        beforeEnter: (_to, _from, next) => {
             const authStore = useAuthStore();
             if (!authStore.checkLoginStatus() || !authStore.isAdmin) {
                 next('/login');
