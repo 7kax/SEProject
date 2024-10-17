@@ -25,6 +25,16 @@ const username = ref('');
 const password = ref('');
 
 const handleLogin = () => {
+     // Check if username or password is empty
+    if (!username.value.trim()) {
+        alert('Username cannot be empty');
+        return;
+    }
+    if (!password.value.trim()) {
+        alert('Password cannot be empty');
+        return;
+    }
+    
     if (username.value === 'admin' && password.value === 'password') {
         // Suppose the login is successful
         authStore.login({ username: username.value, uid: '123' });
