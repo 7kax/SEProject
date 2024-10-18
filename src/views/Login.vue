@@ -3,8 +3,8 @@
         <h2>登录</h2>
         <form @submit.prevent="handleLogin">
             <div class="form-group">
-                <label for="username">用户名:</label>
-                <input type="text" v-model="username" placeholder="输入用户名" required />
+                <label for="username">学号/工号:</label>
+                <input type="text" v-model="username" placeholder="输入学号/工号" required />
             </div>
             <div class="form-group">
                 <label for="password">密码:</label>
@@ -39,18 +39,6 @@ const handleLogin = () => {
         return;
     }
 
-    // if (username.value === 'admin' && password.value === 'password') {
-    //     authStore.login({ username: username.value, uid: '123' });
-    //     successAlert('登录成功');
-    //     router.push('/');
-    // } else if (username.value === 'user' && password.value === 'password') {
-    //     authStore.login({ username: username.value, uid: '456' });
-    //     successAlert('登录成功');
-    //     router.push('/');
-    // } else {
-    //     errorAlert('用户名或密码错误');
-    // }
-
     const data = {
         username: username.value,
         password: password.value,
@@ -59,11 +47,10 @@ const handleLogin = () => {
         console.log(res);
         const data = res.data;
         if (res.status === 200) {
-            const user = {
-                username: data.user.username,
-                uid: data.user.id,
+            const user: AuthUser = {
+                username: data.username,
                 token: data.token,
-                isAdmin: data.user.role
+                isAdmin: data.role,
             };
             authStore.login(user);
             successAlert('登录成功');

@@ -3,12 +3,8 @@
         <h1>注册</h1>
         <form @submit.prevent="handleRegister">
             <div class="form-group">
-                <label for="username">用户名:</label>
-                <input type="text" v-model="username" placeholder="输入用户名" required />
-            </div>
-            <div class="form-group">
-                <label for="uid">学号/工号:</label>
-                <input type="text" v-model="sjnumber" placeholder="输入学号/工号" required />
+                <label for="username">学号/工号:</label>
+                <input type="text" v-model="username" placeholder="输入学号/工号" required />
             </div>
             <div class="form-group">
                 <label for="password">密码:</label>
@@ -26,22 +22,17 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { validPassword, validUsername, validSjnumber } from '@/utils/verify';
+import { validPassword, validUsername } from '@/utils/verify';
 import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const username = ref('');
-const sjnumber = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 
 const handleRegister = () => {
     if (!validUsername(username.value)) {
-        errorAlert('用户名格式错误');
-        return;
-    }
-    if (!validSjnumber(sjnumber.value)) {
         errorAlert('学号/工号格式错误');
         return;
     }

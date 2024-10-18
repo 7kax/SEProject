@@ -11,6 +11,10 @@
   "compilerOptions": {
     "types": [
       "element-plus/global"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "src/types"
     ]
   }
 }

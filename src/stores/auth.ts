@@ -1,15 +1,8 @@
 import { defineStore } from "pinia";
 
-export interface User {
-    username: string;
-    uid: string;
-    token: string;
-    isAdmin: boolean;
-}
-
 interface AuthState {
     isLoggedIn: boolean;
-    user?: User;
+    user?: AuthUser;
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -18,7 +11,7 @@ export const useAuthStore = defineStore('auth', {
         user: undefined
     }),
     actions: {
-        login(user: User) {
+        login(user: AuthUser) {
             this.isLoggedIn = true;
             this.user = user;
 
@@ -38,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
             const isLoggedIn = localStorage.getItem('isLoggedIn');
 
             if (isLoggedIn) {
-                const user = JSON.parse(localStorage.getItem('user') || '{}') as User;
+                const user = JSON.parse(localStorage.getItem('user') || '{}') as AuthUser;
                 this.isLoggedIn = true;
                 this.user = user;
             }
