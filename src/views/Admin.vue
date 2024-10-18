@@ -33,8 +33,7 @@
             </el-form>
             <template #footer>
                 <el-button @click="changeUsernameFormVisible = false">取消</el-button>
-                <el-button type="primary"
-                    @click="changeUsernameFormVisible = false; changeUsernameRequest();">确定</el-button>
+                <el-button type="primary" @click="changeUsernameRequest();">确定</el-button>
             </template>
         </el-dialog>
 
@@ -46,8 +45,7 @@
             </el-form>
             <template #footer>
                 <el-button @click="changePasswordFormVisible = false">取消</el-button>
-                <el-button type="primary"
-                    @click="changePasswordFormVisible = false; changePasswordRequest();">确定</el-button>
+                <el-button type="primary" @click="changePasswordRequest();">确定</el-button>
             </template>
         </el-dialog>
 
@@ -65,7 +63,7 @@
             </el-form>
             <template #footer>
                 <el-button @click="addFormVisible = false">取消</el-button>
-                <el-button type="primary" @click="addFormVisible = false; addRequest();">确定</el-button>
+                <el-button type="primary" @click="addRequest();">确定</el-button>
             </template>
         </el-dialog>
     </div>
@@ -74,7 +72,9 @@
 <script lang="ts" setup>
 import example_users from '@/data/example_users.json';
 import { ref } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
+import { errorAlert, successAlert, infoAlert } from '@/utils/alert';
+import { validPassword, validSjnumber, validUsername } from '@/utils/verify';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -99,22 +99,26 @@ const changeUsername = (id: number) => {
     UserId.value = id;
 };
 const changeUsernameRequest = () => {
+    if (!validUsername(changeUsernameForm.value.newUsername)) {
+        errorAlert('用户名格式错误');
+        return;
+    }
+    changeUsernameFormVisible.value = false;
     console.log(UserId.value, changeUsernameForm.value.newUsername);
-    ElMessage({
-        type: 'success',
-        message: '修改成功!'
-    });
+    successAlert('修改成功!');
 };
 const changePassword = (id: number) => {
     changePasswordFormVisible.value = true;
     UserId.value = id;
 };
 const changePasswordRequest = () => {
+    if (!validPassword(changePasswordForm.value.newPassword)) {
+        errorAlert('密码格式错误');
+        return;
+    }
+    changePasswordFormVisible.value = false;
     console.log(UserId.value, changePasswordForm.value.newPassword);
-    ElMessage({
-        type: 'success',
-        message: '修改成功!'
-    });
+    successAlert('修改成功!');
 }
 const deleteUser = (id: number) => {
     ElMessageBox.confirm('此操作将永久删除该用户, 是否继续?', '提示', {
@@ -123,26 +127,31 @@ const deleteUser = (id: number) => {
         type: 'warning'
     }).then(() => {
         console.log(id);
-        ElMessage({
-            type: 'success',
-            message: '删除成功!'
-        });
+        successAlert('删除成功!');
     }).catch(() => {
-        ElMessage({
-            type: 'info',
-            message: '已取消删除'
-        });
+        infoAlert('已取消删除');
     });
 }
 const addUser = () => {
     addFormVisible.value = true;
 }
 const addRequest = () => {
+    if (!validUsername(addForm.value.username)) {
+        errorAlert('用户名格式错误');
+        return;
+    }
+    if (!validSjnumber(addForm.value.number)) {
+        errorAlert('学号/工号格式错误');
+        return;
+    }
+    if (!validPassword(addForm.value.password)) {
+        errorAlert('密码格式错误');
+        return;
+    }
+
+    addFormVisible.value = false;
     console.log(addForm.value);
-    ElMessage({
-        type: 'success',
-        message: '添加成功!'
-    });
+    successAlert('添加成功!');
 }
 const goBack = () => {
     router.push('/');

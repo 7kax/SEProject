@@ -26,55 +26,40 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { emptyString } from '../utils/func';
+import { validPassword, validUsername, validSjnumber } from '@/utils/verify';
+import { errorAlert, successAlert } from '@/utils/alert';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const username = ref('');
 const sjnumber = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 
 const handleRegister = () => {
-    const illegalChars = /[!@#\$%\^\&*\)\(+=._-]+/g;
-
-    // if (!username.value.trim()) {
-    //     alert('Username cannot be empty');
-    //     return;
-    // }
-    // if (!uid.value.trim()) {
-    //     alert('UID cannot be empty');
-    //     return;
-    // }
-    if (emptyString(username.value, '用户名')) {
+    if (!validUsername(username.value)) {
+        errorAlert('用户名格式错误');
         return;
     }
-    if (emptyString(sjnumber.value, '学号/工号')) {
+    if (!validSjnumber(sjnumber.value)) {
+        errorAlert('学号/工号格式错误');
         return;
     }
-
-
-    if (illegalChars.test(username.value)) {
-        // alert('Username contains illegal characters');
-        alert('用户名包含非法字符');
-        return;
-    }
-    if (illegalChars.test(sjnumber.value)) {
-        // alert('UID contains illegal characters');
-        alert('学号/工号包含非法字符');
+    if (!validPassword(password.value)) {
+        errorAlert('密码格式错误');
         return;
     }
 
     if (password.value !== confirmPassword.value) {
-        // alert('Passwords do not match');
-        alert('密码不匹配');
+        errorAlert('密码不匹配');
         return;
     }
 
-    // alert('Registration successful!');
-    alert('注册成功!');
+    successAlert('注册成功!');
 };
 
 const redirectToLogin = () => {
-    window.location.href = '/login';
+    router.push('/login');
 };
 </script>
 

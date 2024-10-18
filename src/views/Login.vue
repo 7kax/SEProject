@@ -18,34 +18,41 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { useAuthStore } from '../stores/auth';
-import { emptyString } from '../utils/func';
+import { useAuthStore } from '@/stores/auth';
+import { validPassword, validUsername } from '@/utils/verify';
+import { errorAlert, successAlert } from '@/utils/alert';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const authStore = useAuthStore();
 const username = ref('');
 const password = ref('');
 
 const handleLogin = () => {
-    if (emptyString(username.value, '用户名')) {
+    if (!validUsername(username.value)) {
+        errorAlert('用户名格式错误');
         return;
     }
-    if (emptyString(password.value, '密码')) {
+    if (!validPassword(password.value)) {
+        errorAlert('密码格式错误');
         return;
     }
 
     if (username.value === 'admin' && password.value === 'password') {
         authStore.login({ username: username.value, uid: '123' });
-        window.location.href = '/';
+        successAlert('登录成功');
+        router.push('/');
     } else if (username.value === 'user' && password.value === 'password') {
         authStore.login({ username: username.value, uid: '456' });
-        window.location.href = '/';
+        successAlert('登录成功');
+        router.push('/');
     } else {
-        alert('Invalid username or password');
+        errorAlert('用户名或密码错误');
     }
 };
 
 const redirectToRegister = () => {
-    window.location.href = '/register';
+    router.push('/register');
 };
 </script>
 
