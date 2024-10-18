@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "username": "JohnDoe",
+        "number": "1234567890"
+    },
+    {
+        "id": 2,
+        "username": "JaneDoe",
+        "number": "0987654321"
+    },
+    {
+        "id": 3,
+        "username": "JohnSmith",
+        "number": "1230984567"
+    },
+    {
+        "id": 4,
+        "username": "JaneSmith",
+        "number": "0981234567"
+    }
+]
