@@ -22,6 +22,7 @@ import { useAuthStore } from '@/stores/auth';
 import { validPassword, validUsername } from '@/utils/verify';
 import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
+import { postRequest } from '@/utils/request';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -38,17 +39,41 @@ const handleLogin = () => {
         return;
     }
 
-    if (username.value === 'admin' && password.value === 'password') {
-        authStore.login({ username: username.value, uid: '123' });
-        successAlert('登录成功');
-        router.push('/');
-    } else if (username.value === 'user' && password.value === 'password') {
-        authStore.login({ username: username.value, uid: '456' });
-        successAlert('登录成功');
-        router.push('/');
-    } else {
-        errorAlert('用户名或密码错误');
-    }
+    // if (username.value === 'admin' && password.value === 'password') {
+    //     authStore.login({ username: username.value, uid: '123' });
+    //     successAlert('登录成功');
+    //     router.push('/');
+    // } else if (username.value === 'user' && password.value === 'password') {
+    //     authStore.login({ username: username.value, uid: '456' });
+    //     successAlert('登录成功');
+    //     router.push('/');
+    // } else {
+    //     errorAlert('用户名或密码错误');
+    // }
+
+    const data = {
+        username: username.value,
+        password: password.value,
+    };
+    postRequest('/api/login', data).then((res) => {
+        console.log(res);
+        const data = res.data;
+        if (res.status === 200) {
+            const user = {
+                username: data.user.username,
+                uid: data.user.id,
+                token: data.token,
+                isAdmin: data.user.role
+            };
+            authStore.login(user);
+            successAlert('登录成功');
+            router.push('/');
+        } else if (res.status === 401) {
+            errorAlert(data.message);
+        } else {
+            errorAlert('登录失败');
+        }
+    });
 };
 
 const redirectToRegister = () => {
