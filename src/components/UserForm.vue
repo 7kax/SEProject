@@ -27,6 +27,7 @@
 <script lang="ts" setup>
 import { defineProps, ref, defineEmits, watch } from 'vue';
 import { ElForm } from 'element-plus';
+import { validID } from '@/utils/verify';
 
 const props = defineProps<{
     user: UserInfo;
@@ -40,6 +41,15 @@ const formRef = ref<InstanceType<typeof ElForm> | null>(null);
 const rules = {
     id: [
         { required: true, message: '请输入学号/工号', trigger: 'blur' },
+        {
+            validator: (_rule: any, value: string, callback: any) => {
+                if (!validID(value)) {
+                    callback(new Error('学号/工号格式错误'));
+                } else {
+                    callback();
+                }
+            }, trigger: 'blur',
+        },
     ],
     name: [
         { required: false, message: '请输入姓名', trigger: 'blur' },

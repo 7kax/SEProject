@@ -31,7 +31,7 @@
         </el-dialog>
 
         <el-dialog v-model="resetPasswordFormVisible" title="重置密码" width="500">
-            <el-form :model="resetPasswordForm">
+            <el-form :model="resetPasswordForm" :rules="passwordRules">
                 <el-form-item label="新密码" prop="newPassword" required>
                     <el-input v-model="resetPasswordForm.newPassword" />
                 </el-form-item>
@@ -56,6 +56,7 @@ import { ElMessageBox } from 'element-plus';
 import { errorAlert, successAlert, infoAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
 import { deleteWithToken, getWithToken, patchWithToken, postWithToken } from '@/utils/request';
+import { validPassword } from '@/utils/verify';
 
 const router = useRouter();
 
@@ -104,6 +105,21 @@ const modifyUserRequest = () => {
 };
 
 // 重置密码相关逻辑
+// 校验密码格式
+const passwordRules = {
+    newPassword: [
+        { required: true, message: '请输入新密码', trigger: 'blur' },
+        {
+            validator: (_rule: any, value: string, callback: any) => {
+                if (!validPassword(value)) {
+                    callback(new Error('密码格式错误'));
+                } else {
+                    callback();
+                }
+            }, trigger: 'blur',
+        },
+    ],
+};
 // 控制重置密码对话框的显示
 const resetPasswordFormVisible = ref(false);
 // 用于缓存选中行的用户信息, 以及便于重置密码
