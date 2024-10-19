@@ -1,22 +1,30 @@
 [
     {
-        "id": 1,
-        "username": "JohnDoe",
-        "number": "1234567890"
+        "id": "1",
+        "name": "JohnDoe",
+        "email": "JohnDoe@666.com",
+        "phone": "1234567890",
+        "address": "1234 Elm St"
     },
     {
-        "id": 2,
-        "username": "JaneDoe",
-        "number": "0987654321"
+        "id": "2",
+        "name": "JaneDoe",
+        "email": "JaneDoe@fox.com",
+        "phone": "0987654321",
+        "address": "5678 Oak St"
     },
     {
-        "id": 3,
-        "username": "JohnSmith",
-        "number": "1230984567"
+        "id": "3",
+        "name": "JohnSmith",
+        "email": "JohnSmith@gmail.com",
+        "phone": "1230984567",
+        "address": "1234 Elm St"
     },
     {
-        "id": 4,
-        "username": "JaneSmith",
-        "number": "0981234567"
+        "id": "4",
+        "name": "JaneSmith",
+        "email": "JaneSmith@163.com",
+        "phone": "0981234567",
+        "address": "5678 Oak St"
     }
 ]
