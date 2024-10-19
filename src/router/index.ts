@@ -34,6 +34,14 @@ const routes: Array<RouteRecordRaw> = [
         path: '/profile',
         name: 'Profile',
         component: Profile,
+        beforeEnter: (_to, _from, next) => {
+            const authStore = useAuthStore();
+            if (!authStore.checkLoginStatus()) {
+                next('/login');
+            } else {
+                next();
+            }
+        }
     },
     {
         path: '/admin',
