@@ -18,6 +18,7 @@ export const useAuthStore = defineStore('auth', {
             // Save to local storage
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('token', user.token);
         },
         logout() {
             this.isLoggedIn = false;
@@ -26,6 +27,7 @@ export const useAuthStore = defineStore('auth', {
             // Remove from local storage
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('user');
+            localStorage.removeItem('token');
         },
         checkLoginStatus() {
             const isLoggedIn = localStorage.getItem('isLoggedIn');

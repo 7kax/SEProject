@@ -3,7 +3,7 @@
         <el-table :data="users" style="width: 100%">
             <el-table-column prop="id" label="学号/工号" width="120" sortable />
             <el-table-column prop="name" label="姓名" width="120" sortable />
-            <el-table-column prop="email" label="邮箱" width="120" sortable />
+            <el-table-column prop="email" label="邮箱" width="180" sortable />
             <el-table-column prop="phone" label="电话" width="120" sortable />
             <el-table-column prop="address" label="地址" width="120" sortable />
             <el-table-column label="编辑用户" width="120">
@@ -27,7 +27,7 @@
         <el-button @click="goBack()">返回</el-button>
 
         <el-dialog v-model="modifyUserFormVisible" title="编辑用户" width="500">
-            <UserForm v-model="userForm" @submit="modifyUserRequest()" :disableId="true" />
+            <UserForm :user="userForm" @submit="modifyUserRequest()" :disableId="true" />
         </el-dialog>
 
         <el-dialog v-model="resetPasswordFormVisible" title="重置密码" width="500">
@@ -43,7 +43,7 @@
         </el-dialog>
 
         <el-dialog v-model="addFormVisible" title="添加用户" width="500">
-            <UserForm v-model="userForm" @submit="addRequest" :disableId="false" />
+            <UserForm :user="userForm" @submit="addRequest" :disableId="false" />
         </el-dialog>
     </div>
 </template>
@@ -57,6 +57,7 @@ import { errorAlert, successAlert, infoAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
 import { deleteWithToken, getWithToken, patchWithToken, postWithToken } from '@/utils/request';
 import { validPassword } from '@/utils/verify';
+import UserForm from '@/components/UserForm.vue';
 
 const router = useRouter();
 
