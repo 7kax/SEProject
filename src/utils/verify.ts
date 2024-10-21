@@ -21,7 +21,3 @@ export const validID = (id: string): boolean => {
     }
     return true;
 }
-
-export const validUsername = (username: string): boolean => {
-    return true;
-}

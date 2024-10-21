@@ -22,10 +22,10 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { validPassword, validUsername } from '@/utils/verify';
+import { validPassword, validID } from '@/utils/verify';
 import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
-import {post} from "@/utils/request.ts";
+import { post } from "@/utils/request.ts";
 
 const router = useRouter();
 const username = ref('');
@@ -34,7 +34,7 @@ const password = ref('');
 const confirmPassword = ref('');
 
 const handleRegister = () => {
-    if (!validId(id.value)) {
+    if (!validID(id.value)) {
         errorAlert('学号/工号格式错误');
         return;
     }
@@ -49,20 +49,20 @@ const handleRegister = () => {
     }
 
     const data = {
-      id: id.value,
-      password: password.value,
+        id: id.value,
+        password: password.value,
     };
     post('/api/register', data).then((res) => {
-      console.log(res);
-      const data = res.data;
-      if (res.status === 200) {
-        successAlert('注册成功!');
-        router.push('/');
-      } else if (res.status === 400) {
-        errorAlert(data.message);
-      } else if (res.status === 409) {
-        errorAlert(data.message);
-      }
+        console.log(res);
+        const data = res.data;
+        if (res.status === 200) {
+            successAlert('注册成功!');
+            router.push('/');
+        } else if (res.status === 400) {
+            errorAlert(data.message);
+        } else if (res.status === 409) {
+            errorAlert(data.message);
+        }
     });
 };
 
