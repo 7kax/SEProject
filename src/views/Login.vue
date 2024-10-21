@@ -44,13 +44,12 @@ const handleLogin = () => {
         password: password.value,
     };
     post('/api/login', data).then((res) => {
-        console.log(res);
         const data = res.data;
         if (res.status === 200) {
             const user: AuthUser = {
-                username: data.username,
+                id: data.user.id,
                 token: data.token,
-                isAdmin: data.role,
+                isAdmin: data.user.role,
             };
             authStore.login(user);
             successAlert('登录成功');
