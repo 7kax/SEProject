@@ -2,140 +2,132 @@
     <h1>个人信息</h1>
     <button @click="goHome">返回</button>
     <div>
-        <h2>ID:</h2><br>{{ userInfo.username }}
-        <h2>密码:******</h2><button @click="showPasswordChangingControls">修改密码</button>
-        <h3 v-show="onChangingPassword">输入旧密码
-            <input v-model="oldPassword" @input="checkOldPassword">
-            <span>{{ oldPasswordMessage }}</span>
-        </h3>
-        <h3 v-show="onChangingPassword">输入新密码
-            <input v-model="newPassword" @input="checkNewPassword">
-            <span>{{ newPasswordMessage }}</span>
-        </h3>
-        <h3 v-show="onChangingPassword">确认新密码
-            <input v-model="newPasswordConfirm" @input="checkNewPasswordConfirm">
-            <span>{{ newPasswordConfirmMessage }}</span>
-        </h3>
-        <button @click="handlePasswordChange" v-show="onChangingPassword">确认修改</button>
-        <button @click="hidePasswordChangingInputs" v-show="onChangingPassword">取消</button>
+        <h2>ID:{{ userInfo.id }}</h2><br>
+        <h2>密码:******</h2><button @click="onChangingPassword = true;">修改密码</button>
+
+        <div v-show="onChangingPassword">
+            <h3>输入旧密码</h3>
+            <input v-model="oldPassword">
+            <h3>输入新密码</h3>
+            <input v-model="newPassword">
+            <h3>确认新密码</h3>
+            <input v-model="newPasswordConfirm">
+            <br>
+            <button @click="handlePasswordChange">确认修改</button>
+            <button @click="onChangingPassword = false;">取消</button>
+        </div>
+
         <h2>姓名:<input v-model="userInfo.name" :disabled="!onChangingInfo"></h2>
         <h2>手机:<input v-model="userInfo.phone" :disabled="!onChangingInfo"></h2>
         <h2>邮箱:<input v-model="userInfo.email" :disabled="!onChangingInfo"></h2>
         <h2>住址:<input v-model="userInfo.address" :disabled="!onChangingInfo"></h2>
-        <button @click="enableInfoChangingControls" v-show="!onChangingInfo">修改个人信息</button>
-        <button @click="handleInfoChanging" v-show="onChangingInfo">保存</button>
-        <button @click="disableInfoChangingControls" v-show="onChangingInfo">取消</button>
+        <button @click="onChangingInfo = true;" v-show="!onChangingInfo">修改个人信息</button>
 
+        <button @click="handleInfoChanging" v-show="onChangingInfo">保存</button>
+        <button @click="onChangingInfo = false;" v-show="onChangingInfo">取消</button>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive,ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { validPassword } from '@/utils/verify';
-import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
-import { postRequest } from '@/utils/request';
+import { getWithToken, patchWithToken } from '@/utils/request';
+import { errorAlert, successAlert } from '@/utils/alert';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const user = authStore.user;
+const userInfo = ref<UserInfo>({} as UserInfo);
 
-const user = authStore.user
+// 进入页面时, 向后端请求用户信息
+onMounted(() => {
+    const token = user!.token;
+    getWithToken('/api/user', token).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+            userInfo.value = res.data.user;
+        } else if (res.status === 401) {
+            errorAlert('请先登录');
+            router.push('/login');
+        } else {
+            errorAlert('未知错误');
+        }
+    });
+});
 
-let passWord = ref("")
-let oldPassword = ref("")
-let oldPasswordMessage = ref("")
-let newPassword = ref("")
-let newPasswordMessage = ref("")
-let newPasswordConfirm = ref("")
-let newPasswordConfirmMessage = ref("")
-let userInfo = reactive<UserInfo>({
-    username: '',
-    name: '',
-    email: '',
-    phone: '',
-    address: ''
-})
-let onChangingPassword = ref(false);
-let onChangingInfo = ref(false);
-
-//TODO 向后端获取用户信息
-userInfo.username = "1"
-userInfo.name = "JohnSmith"
-userInfo.phone = "1801231188"
-userInfo.email = "21333333333@fudan.edu.cn"
-userInfo.address = "松花江路2500号"
-
-
-//TODO 向后端获取用户密码
-passWord.value = "123456"
-
-function showPasswordChangingControls(){
-    onChangingPassword.value = true
-}
-
-function hidePasswordChangingInputs(){
-    onChangingPassword.value = false
-    oldPasswordMessage.value = ""
-    newPasswordMessage.value = ""
-    newPasswordConfirmMessage.value = ""
-}
-
-function enableInfoChangingControls(){
-    onChangingInfo.value = true
-}
-
-function disableInfoChangingControls(){
-    onChangingInfo.value = false
-}
-
-
-
-
-
-function checkOldPassword(){
-    if(oldPassword.value != passWord.value){
-        oldPasswordMessage.value = "请输入正确的密码"
+// 修改密码
+const onChangingPassword = ref(false);
+const oldPassword = ref('');
+const newPassword = ref('');
+const newPasswordConfirm = ref('');
+const handlePasswordChange = () => {
+    // 检查密码格式
+    if (!validPassword(oldPassword.value)) {
+        errorAlert('旧密码格式错误');
+        return;
     }
-    else{
-        oldPasswordMessage.value = "✔"
+    if (!validPassword(newPassword.value)) {
+        errorAlert('新密码格式错误');
+        return;
     }
-}
 
-function checkNewPassword(){
-    if(validPassword(newPassword.value)){
-        newPasswordMessage.value = "合法密码"
+    // 检查新密码是否匹配
+    if (newPassword.value !== newPasswordConfirm.value) {
+        errorAlert('新密码不匹配');
+        return;
     }
-    else{
-        newPasswordMessage.value = "您的密码不合法！"
-    }
-}
 
-function checkNewPasswordConfirm(){
-    if(newPassword.value != newPasswordConfirm.value){
-        newPasswordConfirmMessage.value = "两次输入不一致！"
-    }
-    else{
-        newPasswordConfirmMessage.value = "✔"
-    }
-}
+    // 发送请求
+    const data = {
+        oldPassword: oldPassword.value,
+        newPassword: newPassword.value,
+    };
+    const token = user!.token;
+    patchWithToken('/api/user/password', data, token).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+            successAlert('修改成功');
+            oldPassword.value = '';
+            newPassword.value = '';
+            newPasswordConfirm.value = '';
+            onChangingPassword.value = false;
+        } else if (res.status === 401) {
+            errorAlert('请先登录');
+            router.push('/login');
+        } else {
+            errorAlert('未知错误');
+        }
+    });
+};
 
-function handlePasswordChange(){
-    //TODO
-}
+// 修改个人信息
+const onChangingInfo = ref(false);
+const handleInfoChanging = () => {
+    const data = {
+        user: userInfo.value,
+    };
+    const token = user!.token;
+    patchWithToken('/api/user', data, token).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+            successAlert('修改成功');
+            onChangingInfo.value = false;
+        } else if (res.status === 401) {
+            errorAlert('请先登录');
+            router.push('/login');
+        } else {
+            errorAlert('未知错误');
+        }
+    });
+};
 
-function handleInfoChanging(){
-    //TODO
-}
 
 
-
-function goHome(){
-    router.push("/")
-}
-
-
-
+const goHome = () => {
+    router.push('/');
+};
 </script>
 
 <style scoped>

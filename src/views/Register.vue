@@ -3,8 +3,8 @@
         <h1>注册</h1>
         <form @submit.prevent="handleRegister">
             <div class="form-group">
-                <label for="username">学号/工号:</label>
-                <input type="text" v-model="username" placeholder="输入学号/工号" required />
+                <label for="id">学号/工号:</label>
+                <input type="text" v-model="id" placeholder="输入学号/工号" required />
             </div>
             <div class="form-group">
                 <label for="password">密码:</label>
@@ -28,7 +28,6 @@ import { useRouter } from 'vue-router';
 import { post } from "@/utils/request.ts";
 
 const router = useRouter();
-const username = ref('');
 const id = ref('');
 const password = ref('');
 const confirmPassword = ref('');
@@ -55,7 +54,7 @@ const handleRegister = () => {
     post('/api/register', data).then((res) => {
         console.log(res);
         const data = res.data;
-        if (res.status === 200) {
+        if (res.status === 201) {
             successAlert('注册成功!');
             router.push('/');
         } else if (res.status === 400) {
