@@ -1,66 +1,53 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Home from '../views/Home.vue';
-import Login from '../views/Login.vue';
-import Register from '../views/Register.vue';
-import Profile from '../views/Profile.vue';
-import Admin from '../views/Admin.vue';
-import { useAuthStore } from '../stores/auth';
+import { useAuthStore } from '@/stores/auth';
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         name: 'Home',
-        component: Home,
-        beforeEnter: (_to, _from, next) => {
-            const authStore = useAuthStore();
-            if (!authStore.checkLoginStatus()) {
-                next('/login');
-            } else {
-                next();
-            }
-        }
+        component: () => import('@/views/Home.vue'),
+        meta: { requiresAuth: true }
     },
     {
         path: '/login',
         name: 'Login',
-        component: Login
+        component: () => import('@/views/Login.vue')
     },
     {
         path: '/register',
         name: 'Register',
-        component: Register
+        component: () => import('@/views/Register.vue')
     },
     {
         path: '/profile',
         name: 'Profile',
-        component: Profile,
-        beforeEnter: (_to, _from, next) => {
-            const authStore = useAuthStore();
-            if (!authStore.checkLoginStatus()) {
-                next('/login');
-            } else {
-                next();
-            }
-        }
+        component: () => import('@/views/Profile.vue'),
+        meta: { requiresAuth: true }
     },
     {
         path: '/admin',
         name: 'Admin',
-        component: Admin,
-        beforeEnter: (_to, _from, next) => {
-            const authStore = useAuthStore();
-            if (!authStore.checkLoginStatus() || !authStore.isAdmin) {
-                next('/login');
-            } else {
-                next();
-            }
-        }
+        component: () => import('@/views/Admin.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true }
     }
 ];
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
+});
+
+router.beforeEach((to, _from, next) => {
+    const authStore = useAuthStore();
+    const isLoggedIn = authStore.checkLoginStatus();
+
+    if (to.meta.requiresAuth && !isLoggedIn) {
+        next('/login');
+    } else if (to.meta.requiresAdmin && !authStore.user?.isAdmin) {
+        next('/');
+    } else {
+        next();
+    }
 });
 
 export default router;

@@ -3,8 +3,8 @@
         <h2>登录</h2>
         <form @submit.prevent="handleLogin">
             <div class="form-group">
-                <label for="username">学号/工号:</label>
-                <input type="text" v-model="username" placeholder="输入学号/工号" required />
+                <label for="id">学号/工号:</label>
+                <input type="text" v-model="id" placeholder="输入学号/工号" required />
             </div>
             <div class="form-group">
                 <label for="password">密码:</label>
@@ -19,19 +19,19 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { validPassword, validUsername } from '@/utils/verify';
+import { validPassword, validID } from '@/utils/verify';
 import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
-import { postRequest } from '@/utils/request';
+import { post } from '@/utils/request';
 
 const router = useRouter();
 const authStore = useAuthStore();
-const username = ref('');
+const id = ref('');
 const password = ref('');
 
 const handleLogin = () => {
-    if (!validUsername(username.value)) {
-        errorAlert('用户名格式错误');
+    if (!validID(id.value)) {
+        errorAlert('学号/工号格式错误');
         return;
     }
     if (!validPassword(password.value)) {
@@ -40,10 +40,10 @@ const handleLogin = () => {
     }
 
     const data = {
-        username: username.value,
+        id: id.value,
         password: password.value,
     };
-    postRequest('/api/login', data).then((res) => {
+    post('/api/login', data).then((res) => {
         console.log(res);
         const data = res.data;
         if (res.status === 200) {

@@ -1,16 +1,5 @@
 const illegalChars = /[!@#\$%\^\&*\)\(+=._-]+/g;
 
-export const validUsername = (username: string): boolean => {
-    const trimedUsername = username.trim();
-    if (trimedUsername.length === 0) {
-        return false;
-    }
-    if (illegalChars.test(trimedUsername)) {
-        return false;
-    }
-    return true;
-}
-
 export const validPassword = (password: string): boolean => {
     const trimedPassword = password.trim();
     if (trimedPassword.length === 0) {
@@ -22,13 +11,17 @@ export const validPassword = (password: string): boolean => {
     return true;
 }
 
-export const validSjnumber = (sjnumber: string): boolean => {
-    const trimedSjnumber = sjnumber.trim();
-    if (trimedSjnumber.length === 0) {
+export const validID = (id: string): boolean => {
+    const trimedID = id.trim();
+    if (trimedID.length === 0) {
         return false;
     }
-    if (illegalChars.test(trimedSjnumber)) {
+    if (illegalChars.test(trimedID)) {
         return false;
     }
+    return true;
+}
+
+export const validUsername = (username: string): boolean => {
     return true;
 }
