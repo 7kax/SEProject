@@ -1,6 +1,6 @@
 <template>
     <div class="home-container">
-        <h1>Welcome, {{ user?.username }}!</h1>
+        <h1>Welcome, {{ user?.id }}!</h1>
         <button @click="logout">Logout</button>
         <button @click="redirectToProfile">Go to Profile</button>
         <button v-if="isAdmin" @click="redirectToAdmin">Manage Users</button>
@@ -13,7 +13,7 @@ import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
-const isAdmin = computed(() => authStore.isAdmin);
+const isAdmin = computed(() => authStore.user?.isAdmin);
 
 const logout = () => {
     authStore.logout();
