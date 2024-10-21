@@ -29,13 +29,15 @@ import { defineProps, ref, defineEmits, watch } from 'vue';
 import { ElForm } from 'element-plus';
 import { validID } from '@/utils/verify';
 
-const props = defineProps<{
-    user: UserInfo;
-    disableId: boolean;
-}>();
-const emits = defineEmits(['updateUser', 'submit']);
+// const props = defineProps<{
+//     user: UserInfo;
+//     disableId: boolean;
+// }>();
+const emits = defineEmits(['submit']);
 
-const userForm = ref({ ...props.user });
+// const userForm = ref({ ...props.user });
+const userForm = defineModel<UserInfo>('user', { required: true });
+const disableId = defineModel<boolean>('disableId', { required: true });
 const formRef = ref<InstanceType<typeof ElForm> | null>(null);
 
 const rules = {
@@ -65,9 +67,9 @@ const rules = {
     ],
 };
 
-watch(userForm, (newVal) => {
-    emits('updateUser', newVal);
-}, { deep: true });
+// watch(userForm, (newVal) => {
+//     emits('updateUser', newVal);
+// }, { deep: true });
 
 const submitForm = () => {
     if (formRef.value) {

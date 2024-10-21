@@ -63,17 +63,21 @@ const router = useRouter();
 
 // 进入网页时, 向后端请求所有用户信息
 const users = ref<UserInfo[]>(example_users);
-onMounted(() => {
+const getUsers = () => {
     const token = localStorage.getItem('token') as string;
     getWithToken('/api/admin', token).then((res) => {
+        console.log(res);
         if (res.status === 200) {
-            users.value = res.data.users;
+            users.value = res.data;
         } else if (res.status === 401 || res.status === 403) {
             errorAlert(res.data.message);
         } else {
             errorAlert('获取用户信息失败');
         }
     });
+};
+onMounted(() => {
+    getUsers();
 });
 
 // 用于缓存选中行的用户信息, 以及便于编辑用户信息
@@ -84,7 +88,11 @@ const userForm = ref<UserInfo>(example_user);
 const modifyUserFormVisible = ref(false);
 // 点击编辑用户按钮时, 将选中行的用户信息填充到表单中, 并显示编辑用户对话框
 const modifyUser = (user: UserInfo) => {
-    userForm.value = { ...user };
+    userForm.value.id = user.id;
+    userForm.value.name = user.name;
+    userForm.value.email = user.email;
+    userForm.value.phone = user.phone;
+    userForm.value.address = user.address;
     modifyUserFormVisible.value = true;
 };
 // 在编辑用户对话框中点击确定时, 发送请求
@@ -97,6 +105,7 @@ const modifyUserRequest = () => {
         if (res.status === 200) {
             successAlert('修改用户信息成功');
             modifyUserFormVisible.value = false;
+            getUsers();
         } else if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404) {
             errorAlert(res.data.message);
         } else {
@@ -160,6 +169,7 @@ const deleteUser = (user: UserInfo) => {
         deleteWithToken(`/api/admin/user/${user.id}`, token).then((res) => {
             if (res.status === 204) {
                 successAlert('删除用户成功');
+                getUsers();
             } else if (res.status === 401 || res.status === 403 || res.status === 404) {
                 errorAlert(res.data.message);
             } else {
@@ -187,7 +197,8 @@ const addRequest = () => {
         if (res.status === 201) {
             successAlert('添加用户成功');
             addFormVisible.value = false;
-        } else if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404) {
+            getUsers();
+        } else if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404 || res.status === 409) {
             errorAlert(res.data.message);
         } else {
             errorAlert('添加用户失败');

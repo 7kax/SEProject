@@ -12,7 +12,7 @@ export const validPassword = (password: string): boolean => {
 }
 
 export const validID = (id: string): boolean => {
-    const trimedID = id.trim();
+    const trimedID = id.toString().trim();
     if (trimedID.length === 0) {
         return false;
     }
