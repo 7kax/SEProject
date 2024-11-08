@@ -1,6 +1,7 @@
 interface AuthUser {
     id: string;         // student number or staff number
     token: string;      // JWT token
+    isAdmin: boolean;
 }
 
 interface UserInfo {
