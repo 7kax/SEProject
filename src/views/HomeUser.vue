@@ -5,11 +5,13 @@
         <button @click="redirectToProfile">Go to Profile</button>
         <button v-if="isAdmin" @click="redirectToAdmin">Manage Users</button>
     </div>
+    <ClaimPaperForm></ClaimPaperForm>
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import ClaimPaperForm from '@/components/ClaimPaperForm.vue';
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
