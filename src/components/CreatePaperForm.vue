@@ -66,16 +66,8 @@ import { ElForm } from 'element-plus';
 import { errorAlert, successAlert } from '@/utils/alert';
 import { postWithToken } from '@/utils/request';
 
-const paperForm = ref<Paper>({
-    DOI: '',
-    title: '',
-    firstAuthor: [''],
-    secondAuthor: [],
-    thirdAuthor: [],
-    CCF: Ccf.A,
-    additional: [],
-    status: Status.NotSubmit,
-});
+const emits = defineEmits(['submit']);
+const paperForm = defineModel<Paper>('paper', { required: true });
 const formRef = ref<InstanceType<typeof ElForm> | null>(null);
 const rules = {
     DOI: [
@@ -108,6 +100,7 @@ const handleSaveDraft = () => {
             postWithToken(url, data, token).then((res) => {
                 if (res.status === 200) {
                     successAlert('保存草稿成功');
+                    emits('submit');
                 } else {
                     errorAlert('保存草稿失败');
                     errorAlert(res.data.message);
@@ -146,6 +139,7 @@ const handleSubmit = () => {
             postWithToken(url, data, token).then((res) => {
                 if (res.status === 200) {
                     successAlert('提交成功');
+                    emits('submit');
                 } else {
                     errorAlert('提交失败');
                     errorAlert(res.data.message);
