@@ -42,11 +42,12 @@
 </template>
 
 <script setup lang="ts">
-import { deleteWithToken, getWithToken } from '@/utils/request';
+import { deleteWithToken, getWithToken, postWithToken } from '@/utils/request';
 import { onMounted, ref } from 'vue';
 import CreatePaperForm from '@/components/CreatePaperForm.vue';
 import { ElMessageBox } from 'element-plus';
 import { errorAlert, infoAlert, successAlert } from '@/utils/alert';
+import { atob, btoa } from 'buffer';
 
 // 组件挂载时, 向后端请求论文数据
 const papers = ref<Paper[]>([]);
@@ -120,16 +121,17 @@ const requestDelete = (index: number) => {
         cancelButtonText: '取消',
         type: 'warning',
     }).then(() => {
-        const doi = papers.value[index].DOI;
-        const url = `/api/papers/${doi}`;
+        const doi = Buffer.from(papers.value[index].DOI).toString('base64');
+        const url = '/api/papers/request/delete?doi=' + doi;
         const token = localStorage.getItem('token') as string;
-        deleteWithToken(url, token).then((res) => {
-            if (res.status === 204) {
+        postWithToken(url, '', token).then((res) => {
+            if (res.status === 200) {
                 successAlert('请求删除成功');
             } else {
                 errorAlert('请求删除失败');
+                errorAlert(res.data.message);
             }
-        })
+        });
     }).catch(() => {
         infoAlert('已取消删除');
     });
