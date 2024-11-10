@@ -42,12 +42,11 @@
 </template>
 
 <script setup lang="ts">
-import { deleteWithToken, getWithToken, postWithToken } from '@/utils/request';
+import { getWithToken, postWithToken } from '@/utils/request';
 import { onMounted, ref } from 'vue';
 import CreatePaperForm from '@/components/CreatePaperForm.vue';
 import { ElMessageBox } from 'element-plus';
 import { errorAlert, infoAlert, successAlert } from '@/utils/alert';
-import { atob, btoa } from 'buffer';
 
 // 组件挂载时, 向后端请求论文数据
 const papers = ref<Paper[]>([]);
