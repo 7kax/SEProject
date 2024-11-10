@@ -29,7 +29,7 @@ const authStore = useAuthStore();
 const id = ref('');
 const password = ref('');
 
-const handleLogin = () => {
+const handleLogin = async () => {
     if (!validID(id.value)) {
         errorAlert('学号/工号格式错误');
         return;
@@ -43,25 +43,41 @@ const handleLogin = () => {
         id: id.value,
         password: password.value,
     };
-    post('/api/login', data).then((res) => {
-        const data = res.data;
+
+    try {
+        let res = await post('/api/login', data);
+
         if (res.status === 200) {
-            const user: AuthUser = {
-                id: data.user.id,
-                token: data.token,
-                isAdmin: data.user.role,
+            const user = {
+                id: res.data.user.id,
+                token: res.data.token,
+                isAdmin: false,
             };
             authStore.login(user);
             successAlert('登录成功');
             router.push('/');
-        } else if (res.status === 401) {
-            errorAlert(data.message);
-        } else {
+            return;
+        }
+      } catch (error) {
+          try {
+              let adminres = await post('/api/admin/login', data);
+
+              if (adminres.status === 200) {
+                  const admin = {
+                      id: adminres.data.user.id,
+                      token: adminres.data.token,
+                      isAdmin: true,
+                  };
+                  authStore.login(admin);
+                  successAlert('管理员登录成功');
+                  router.push('/admin'); // Redirect to admin home
+                  return;
+              }
+        } catch (error) {
             errorAlert('登录失败');
         }
-    });
+    }
 };
-
 const redirectToRegister = () => {
     router.push('/register');
 };
