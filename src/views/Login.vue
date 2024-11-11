@@ -10,6 +10,8 @@
                 <label for="password">密码:</label>
                 <input type="password" v-model="password" placeholder="输入密码" required />
             </div>
+            <input type="checkbox" v-model="isAdmin" id="admin-checkbox" />
+            <label for="admin-checkbox">管理员登录</label>
             <button type="submit" class="btn-primary">登录</button>
         </form>
         <button type="button" class="btn-secondary" @click="redirectToRegister">注册</button>
@@ -28,6 +30,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const id = ref('');
 const password = ref('');
+const isAdmin = ref(false);
 
 const handleLogin = async () => {
     if (!validID(id.value)) {
@@ -43,40 +46,22 @@ const handleLogin = async () => {
         id: id.value,
         password: password.value,
     };
+    const url = isAdmin.value ? '/api/admin/login' : '/api/login';
 
-    try {
-        let res = await post('/api/login', data);
-
+    post(url, data).then((res) => {
         if (res.status === 200) {
             const user = {
-                id: res.data.user.id,
+                id: res.data.id,
                 token: res.data.token,
-                isAdmin: false,
+                isAdmin: isAdmin.value,
             };
             authStore.login(user);
-            successAlert('登录成功');
-            router.push('/');
-            return;
+            successAlert(isAdmin.value ? '管理员登录成功' : '登录成功');
+            router.push(isAdmin.value ? '/admin' : '/');
+        } else {
+            errorAlert(res.data.message);
         }
-      } catch (error) {
-          try {
-              let adminres = await post('/api/admin/login', data);
-
-              if (adminres.status === 200) {
-                  const admin = {
-                      id: adminres.data.user.id,
-                      token: adminres.data.token,
-                      isAdmin: true,
-                  };
-                  authStore.login(admin);
-                  successAlert('管理员登录成功');
-                  router.push('/admin'); // Redirect to admin home
-                  return;
-              }
-        } catch (error) {
-            errorAlert('登录失败');
-        }
-    }
+    });
 };
 const redirectToRegister = () => {
     router.push('/register');
