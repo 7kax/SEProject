@@ -79,17 +79,17 @@ const router = createRouter({
     routes,
 });
 
-// router.beforeEach((to, _from, next) => {
-//     const authStore = useAuthStore();
-//     const isLoggedIn = authStore.checkLoginStatus();
+router.beforeEach((to, _from, next) => {
+    const authStore = useAuthStore();
+    const isLoggedIn = authStore.checkLoginStatus();
 
-//     if (to.meta.requiresAuth && !isLoggedIn) {
-//         next('/login');
-//     } else if (to.meta.requiresAdmin && !authStore.user?.isAdmin) {
-//         next('/');
-//     } else {
-//         next();
-//     }
-// });
+    if (to.meta.requiresAuth && !isLoggedIn) {
+        next('/login');
+    } else if (to.meta.requiresAdmin && !authStore.user?.isAdmin) {
+        next('/');
+    } else {
+        next();
+    }
+});
 
 export default router;
