@@ -43,22 +43,32 @@ interface Paper {
     url?: string;
 }
 
-enum ApplicationType {
-    Claim = 'Claim',
-    Delete = 'Delete'
+interface ClaimInfo {
+    id: string;
+    doi: string;
 }
 
-interface Application {
-    id : string,
-    name: string,
-    doi: string,
-    title: string,
-    firstAuthor : string,
-    type: ApplicationType
-
+interface DeleteInfo {
+    id: string;
+    doi: string;
 }
 
-interface ApplicationData{
-    id : string,
-    doi : string
-}
+// enum ApplicationType {
+//     Claim = 'Claim',
+//     Delete = 'Delete'
+// }
+
+// interface Application {
+//     id: string,
+//     name: string,
+//     doi: string,
+//     title: string,
+//     firstAuthor: string,
+//     type: ApplicationType
+
+// }
+
+// interface ApplicationData {
+//     id: string,
+//     doi: string
+// }
