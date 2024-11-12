@@ -29,33 +29,33 @@ const getClaims = () => {
         errorAlert(err.response.data.message);
     });
 };
-const deleteClaim = (claim: ClaimInfo) => {
+const deleteClaim = async (claim: ClaimInfo) => {
     const id = claim.id;
     const doi = Buffer.from(claim.doi).toString('base64');
     const url = '/api/papers/request/claim?id=' + id + '&doi=' + doi;
     const token = localStorage.getItem('token') as string;
-    deleteWithToken(url, token).then((res) => {
+    var flag = false;
+    await deleteWithToken(url, token).then((res) => {
         if (res.status === 204) {
-            return true;
+            flag = true;
         }
     }).catch((err) => {
         errorAlert(err.response.data.message);
-        return false;
     });
     return false;
 };
-const addAuthorship = (claim: ClaimInfo) => {
+const addAuthorship = async (claim: ClaimInfo) => {
     const id = claim.id;
     const doi = Buffer.from(claim.doi).toString('base64');
     const url = '/api/papers/author?id=' + id + '&doi=' + doi;
     const token = localStorage.getItem('token') as string;
-    postWithToken(url, {}, token).then((res) => {
+    var flag = false;
+    await postWithToken(url, {}, token).then((res) => {
         if (res.status === 200) {
-            return true;
+            flag = true;
         }
     }).catch((err) => {
         errorAlert(err.response.data.message);
-        return false;
     });
     return false;
 }
@@ -64,14 +64,14 @@ onMounted(() => {
     getClaims();
 });
 
-const agree = (claim: ClaimInfo) => {
-    if (deleteClaim(claim) && addAuthorship(claim)) {
+const agree = async (claim: ClaimInfo) => {
+    if (await deleteClaim(claim) && await addAuthorship(claim)) {
         successAlert('认领成功');
         getClaims();
     }
 };
-const refuse = (claim: ClaimInfo) => {
-    if (deleteClaim(claim)) {
+const refuse = async (claim: ClaimInfo) => {
+    if (await deleteClaim(claim)) {
         successAlert('已拒绝');
         getClaims();
     }

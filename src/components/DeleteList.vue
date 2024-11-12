@@ -29,50 +29,54 @@ const getDeletes = () => {
         errorAlert(err.response.data.message);
     });
 };
-const removeDelete = (Delete: DeleteInfo) => {
+const removeDelete = async (Delete: DeleteInfo) => {
     const id = Delete.id;
     const doi = Buffer.from(Delete.doi).toString('base64');
     const url = `/api/papers/request/delete?id=${id}&doi=${doi}`;
     const token = localStorage.getItem('token') as string;
-    deleteWithToken(url, token).then((res) => {
+    var flag = false;
+    await deleteWithToken(url, token).then((res) => {
         if (res.status === 204) {
-            return true;
+            flag = true;
         }
     }).catch((err) => {
         errorAlert(err.response.data.message);
-        return false;
     });
-    return false;
+    return flag;
 };
-const deletePaper = (doi: string) => {
+const deletePaper = async (doi: string) => {
     doi = Buffer.from(doi).toString('base64');
     const url = `/api/papers/${doi}`;
     const token = localStorage.getItem('token') as string;
-    deleteWithToken(url, token).then((res) => {
+    var flag = false;
+    await deleteWithToken(url, token).then((res) => {
         if (res.status === 204) {
-            return true;
+            flag = true;
         }
     }).catch((err) => {
         errorAlert(err.response.data.message);
-        return false;
     });
-    return false;
+    return flag;
 }
 
 onMounted(() => {
     getDeletes();
 });
 
-const agree = (Delete: DeleteInfo) => {
-    if (deletePaper(Delete.doi) && removeDelete(Delete)) {
-        successAlert('认领成功');
+const agree = async (Delete: DeleteInfo) => {
+    if (await deletePaper(Delete.doi) && await removeDelete(Delete)) {
+        successAlert('删除成功');
         getDeletes();
+    } else {
+        errorAlert('删除失败');
     }
 };
-const refuse = (Delete: DeleteInfo) => {
-    if (removeDelete(Delete)) {
+const refuse = async (Delete: DeleteInfo) => {
+    if (await removeDelete(Delete)) {
         successAlert('已拒绝');
         getDeletes();
+    } else {
+        errorAlert('拒绝失败');
     }
 };
 </script>
