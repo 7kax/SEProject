@@ -64,7 +64,7 @@ onMounted(() => {
 });
 
 const agree = async (Delete: DeleteInfo) => {
-    if (await deletePaper(Delete.doi) && await removeDelete(Delete)) {
+    if (await deletePaper(Delete.doi)) {
         successAlert('删除成功');
         getDeletes();
     } else {

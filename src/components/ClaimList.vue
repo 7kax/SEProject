@@ -42,12 +42,12 @@ const deleteClaim = async (claim: ClaimInfo) => {
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
-    return false;
+    return flag;
 };
 const addAuthorship = async (claim: ClaimInfo) => {
     const id = claim.id;
     const doi = Buffer.from(claim.doi).toString('base64');
-    const url = '/api/papers/author?id=' + id + '&doi=' + doi;
+    const url = `/api/papers/author?id=${id}&doi=${doi}`;
     const token = localStorage.getItem('token') as string;
     var flag = false;
     await postWithToken(url, {}, token).then((res) => {
@@ -57,7 +57,7 @@ const addAuthorship = async (claim: ClaimInfo) => {
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
-    return false;
+    return flag;
 }
 
 onMounted(() => {
@@ -65,7 +65,7 @@ onMounted(() => {
 });
 
 const agree = async (claim: ClaimInfo) => {
-    if (await deleteClaim(claim) && await addAuthorship(claim)) {
+    if (await addAuthorship(claim) && await deleteClaim(claim)) {
         successAlert('认领成功');
         getClaims();
     }
