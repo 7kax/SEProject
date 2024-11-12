@@ -54,6 +54,18 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/UserPaperBoard.vue'),
         meta: { requiresAuth: true }
     },
+    {
+        path: '/user/papers/list',
+        name: 'UserPaperList',
+        component: () => import('@/components/UserPaperList.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/papers/list',
+        name: 'AdminPaperList',
+        component: () => import('@/components/AdminPaperList.vue'),
+        meta: {requiresAuth: true, requiresAdmin: true }
+    },
 ];
 
 const router = createRouter({
