@@ -5,7 +5,7 @@
         <el-main>
             <el-table :data="papers" fit>
                 <el-table-column prop="title" label="论文标题"></el-table-column>
-                <el-table-column prop="author" label="作者">
+                <el-table-column label="作者">
                     <template #default="scope">
                         <span
                             v-for="(author, index) in [...scope.row.firstAuthor, ...scope.row.secondAuthor, ...scope.row.thirdAuthor]"
@@ -28,18 +28,17 @@ import { onMounted, ref } from 'vue';
 // 组件挂载时, 向后端请求论文数据
 const papers = ref<Paper[]>([]);
 const refreshPapers = () => {
-    const url = `/api/papers`;
+    const url = `/api/papers?id&doi`;
     const token = localStorage.getItem('token') as string;
     getWithToken(url, token).then((res) => {
-        console.log(res);
         if (res.status === 200) {
             papers.value = res.data.papers;
 
             // 删去papers中status不为"审核通过"的元素
-            papers.value = papers.value.filter((paper) => paper.status === Status.Approve);
+            papers.value = papers.value.filter((paper) => paper.status === 'approve');
         }
     }).catch((err) => {
-        errorAlert(err.response.data.message);
+        errorAlert(err.res.data.message);
     });
 };
 onMounted(() => {

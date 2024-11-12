@@ -1,9 +1,9 @@
 <template>
     <h2>认领请求</h2>
-    <el-table :data="claims" style="width: 100%">
-        <el-table-column prop="id" label="申请人" width="120" sortable />
-        <el-table-column prop="doi" label="DOI" width="120" sortable />
-        <el-table-column label="审核" width="120">
+    <el-table :data="claims" fit>
+        <el-table-column prop="id" label="申请人" sortable />
+        <el-table-column prop="doi" label="DOI" sortable />
+        <el-table-column label="审核" width="240">
             <template #default="scope">
                 <el-button type="primary" @click="agree(scope.row)">同意</el-button>
                 <el-button type="danger" @click="refuse(scope.row)">拒绝</el-button>
