@@ -4,12 +4,6 @@ import { useAuthStore } from '@/stores/auth';
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        name: 'HomeUser',
-        component: () => import('@/views/user/Home.vue'),
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/login',
         name: 'Login',
         component: () => import('@/views/Login.vue')
     },
@@ -19,19 +13,37 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/Register.vue')
     },
     {
+        path: '/user/home',
+        name: 'UserHome',
+        component: () => import('@/views/user/Home.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
         path: '/user/profile',
         name: 'UserProfile',
         component: () => import('@/views/user/Profile.vue'),
         meta: { requiresAuth: true }
     },
     {
-        path: '/admin',
-        name: 'HomeAdmin',
+        path: '/user/paper_board',
+        name: 'UserPaperBoard',
+        component: () => import('@/views/user/PaperBoard.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/user/paper_list',
+        name: 'UserPaperList',
+        component: () => import('@/views/user/PaperList.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/home',
+        name: 'AdminHome',
         component: () => import('@/views/admin/Home.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
-        path: '/admin/papers/board',
+        path: '/admin/paper_board',
         name: 'AdminPaperBoard',
         component: () => import('@/views/admin/PaperBoard.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
@@ -43,31 +55,13 @@ const routes: Array<RouteRecordRaw> = [
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
-        path: '/admin/request/detail',
-        name: 'AdminRequestDetail',
-        component: () => import('@/components/AdminRequestDetail.vue'),
-        meta: { requiresAuth: true, requiresAdmin: true }
-    },
-    {
-        path: '/admin/user',
+        path: '/admin/user_list',
         name: 'AdminUserList',
         component: () => import('@/views/admin/UserList.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
-        path: '/user/papers/board',
-        name: 'UserPaperBoard',
-        component: () => import('@/views/user/PaperBoard.vue'),
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/user/papers/list',
-        name: 'UserPaperList',
-        component: () => import('@/views/user/PaperList.vue'),
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/admin/papers/list',
+        path: '/admin/paper_list',
         name: 'AdminPaperList',
         component: () => import('@/views/admin/PaperList.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
@@ -84,7 +78,7 @@ router.beforeEach((to, _from, next) => {
     const isLoggedIn = authStore.checkLoginStatus();
 
     if (to.meta.requiresAuth && !isLoggedIn) {
-        next('/login');
+        next('/');
     } else if (to.meta.requiresAdmin && !authStore.user?.isAdmin) {
         next('/');
     } else {
