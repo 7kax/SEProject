@@ -24,7 +24,6 @@
         </el-table>
 
         <el-button type="primary" @click="addUser()">添加用户</el-button>
-        <el-button @click="goBack()">返回</el-button>
 
         <el-dialog v-model="modifyUserFormVisible" title="编辑用户" width="500">
             <UserForm :user="userForm" @submit="modifyUserRequest()" :disableId="true" />
@@ -54,12 +53,9 @@ import example_user from '@/data/example_user.json';
 import { ref, onMounted } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import { errorAlert, successAlert, infoAlert } from '@/utils/alert';
-import { useRouter } from 'vue-router';
 import { deleteWithToken, getWithToken, patchWithToken, postWithToken } from '@/utils/request';
 import { validPassword } from '@/utils/verify';
 import UserForm from '@/components/UserForm.vue';
-
-const router = useRouter();
 
 // 进入网页时, 向后端请求所有用户信息
 const users = ref<UserInfo[]>(example_users);
@@ -97,20 +93,17 @@ const modifyUser = (user: UserInfo) => {
 };
 // 在编辑用户对话框中点击确定时, 发送请求
 const modifyUserRequest = () => {
-    const data = {
-        user: userForm.value,
-    };
+    const url = `/api/users/${userForm.value.id}`;
+    const data = JSON.stringify(userForm.value);
     const token = localStorage.getItem('token') as string;
-    patchWithToken('/api/admin/user', data, token).then((res) => {
+    patchWithToken(url, data, token).then((res) => {
         if (res.status === 200) {
             successAlert('修改用户信息成功');
             modifyUserFormVisible.value = false;
             getUsers();
-        } else if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404) {
-            errorAlert(res.data.message);
-        } else {
-            errorAlert('修改用户信息失败');
         }
+    }).catch((err) => {
+        errorAlert(err.response.data.message);
     });
 };
 
@@ -141,20 +134,19 @@ const resetPassword = (user: UserInfo) => {
 };
 // 在重置密码对话框中点击确定时, 发送请求
 const resetPasswordRequest = () => {
-    const data = {
-        id: userForm.value.id,
+    const url = `/api/users/${userForm.value.id}/password`;
+    const data = JSON.stringify({
+        oldPassword: '',
         newPassword: resetPasswordForm.value.newPassword,
-    };
+    })
     const token = localStorage.getItem('token') as string;
-    patchWithToken('/api/admin/user/password', data, token).then((res) => {
+    patchWithToken(url, data, token).then((res) => {
         if (res.status === 200) {
             successAlert('重置密码成功');
             resetPasswordFormVisible.value = false;
-        } else if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404) {
-            errorAlert(res.data.message);
-        } else {
-            errorAlert('重置密码失败');
         }
+    }).catch((err) => {
+        errorAlert(err.response.data.message);
     });
 };
 
@@ -165,16 +157,15 @@ const deleteUser = (user: UserInfo) => {
         cancelButtonText: '取消',
         type: 'warning',
     }).then(() => {
+        const url = `/api/users/${user.id}`;
         const token = localStorage.getItem('token') as string;
-        deleteWithToken(`/api/admin/user/${user.id}`, token).then((res) => {
+        deleteWithToken(url, token).then((res) => {
             if (res.status === 204) {
                 successAlert('删除用户成功');
                 getUsers();
-            } else if (res.status === 401 || res.status === 403 || res.status === 404) {
-                errorAlert(res.data.message);
-            } else {
-                errorAlert('删除用户失败');
             }
+        }).catch((err) => {
+            errorAlert(err.response.data.message);
         });
     }).catch(() => {
         infoAlert('已取消删除');
@@ -191,26 +182,19 @@ const addUser = () => {
 };
 // 在添加用户对话框中点击确定时, 发送请求
 const addRequest = () => {
-    const data = userForm.value;
+    const url = '/api/users';
+    const data = JSON.stringify(userForm.value);
     const token = localStorage.getItem('token') as string;
-    postWithToken('/api/admin/user', data, token).then((res) => {
+    postWithToken(url, data, token).then((res) => {
         if (res.status === 201) {
             successAlert('添加用户成功');
             addFormVisible.value = false;
             getUsers();
-        } else if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404 || res.status === 409) {
-            errorAlert(res.data.message);
-        } else {
-            errorAlert('添加用户失败');
         }
+    }).catch((err) => {
+        errorAlert(err.response.data.message);
     });
 };
-
-// 返回按钮逻辑
-const goBack = () => {
-    router.push('/');
-};
-
 </script>
 
 <style scoped>
