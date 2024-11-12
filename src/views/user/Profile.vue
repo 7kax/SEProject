@@ -1,6 +1,5 @@
 <template>
     <h1>个人信息</h1>
-    <button @click="goHome">返回</button>
     <div>
         <h2>ID:{{ userInfo.id }}</h2><br>
         <h2>密码:******</h2><button @click="onChangingPassword = true;">修改密码</button>
@@ -32,29 +31,26 @@
 import { onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { validPassword } from '@/utils/verify';
-import { useRouter } from 'vue-router';
 import { getWithToken, patchWithToken } from '@/utils/request';
 import { errorAlert, successAlert } from '@/utils/alert';
 
-const router = useRouter();
 const authStore = useAuthStore();
 const user = authStore.user;
 const userInfo = ref<UserInfo>({} as UserInfo);
 
 // 进入页面时, 向后端请求用户信息
-onMounted(() => {
-    const token = user!.token;
-    getWithToken('/api/user', token).then((res) => {
-        console.log(res);
-        if (res.status === 200) {
-            userInfo.value = res.data.user;
-        } else if (res.status === 401) {
-            errorAlert('请先登录');
-            router.push('/login');
-        } else {
-            errorAlert('未知错误');
-        }
+const getProfile = () => {
+    const id = JSON.parse(localStorage.getItem('user') as string).id;
+    const url = `/api/users/${id}`;
+    const token = localStorage.getItem('token') as string;
+    getWithToken(url, token).then((res) => {
+        userInfo.value = res.data.user;
+    }).catch((err) => {
+        errorAlert(err.response.data.message);
     });
+};
+onMounted(() => {
+    getProfile();
 });
 
 // 修改密码
@@ -85,48 +81,34 @@ const handlePasswordChange = () => {
         newPassword: newPassword.value,
     };
     const token = user!.token;
-    patchWithToken('/api/user/password', data, token).then((res) => {
-        console.log(res);
+    patchWithToken(`/api/users/${user!.id}/password`, data, token).then((res) => {
         if (res.status === 200) {
             successAlert('修改成功');
             oldPassword.value = '';
             newPassword.value = '';
             newPasswordConfirm.value = '';
             onChangingPassword.value = false;
-        } else if (res.status === 401) {
-            errorAlert('请先登录');
-            router.push('/login');
-        } else {
-            errorAlert('未知错误');
         }
+    }).catch((err) => {
+        errorAlert(err.response.data.message);
     });
 };
 
 // 修改个人信息
 const onChangingInfo = ref(false);
 const handleInfoChanging = () => {
-    const data = {
-        user: userInfo.value,
-    };
+    const url = `/api/users/${userInfo.value.id}`;
+    const data = JSON.stringify(userInfo.value);
     const token = user!.token;
-    patchWithToken('/api/user', data, token).then((res) => {
-        console.log(res);
+    patchWithToken(url, data, token).then((res) => {
         if (res.status === 200) {
             successAlert('修改成功');
             onChangingInfo.value = false;
-        } else if (res.status === 401) {
-            errorAlert('请先登录');
-            router.push('/login');
-        } else {
-            errorAlert('未知错误');
+            getProfile();
         }
+    }).catch((err) => {
+        errorAlert(err.response.data.message);
     });
-};
-
-
-
-const goHome = () => {
-    router.push('/');
 };
 </script>
 

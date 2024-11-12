@@ -1,7 +1,7 @@
 <!-- 创建论文所用的表单 -->
 <template>
     <el-form :model="paperForm" :rules="rules" ref="formRef" label-width="120px">
-        <el-form-item label="DOI" prop="DOI">
+        <el-form-item label="DOI" prop="DOI" :disabled="disableDOI">
             <el-input v-model="paperForm.DOI"></el-input>
         </el-form-item>
 
@@ -12,8 +12,7 @@
         <el-form-item label="一作列表">
             <div v-for="(_, index) in paperForm.firstAuthor" :key="index">
                 <el-input v-model="paperForm.firstAuthor[index]" placeholder="输入一作者姓名"></el-input>
-                <el-button type="danger" icon="el-icon-delete"
-                    @click="removeElement(paperForm.firstAuthor, index)"></el-button>
+                <el-button type="danger" @click="removeElement(paperForm.firstAuthor, index)">移除</el-button>
             </div>
             <el-button type="primary" @click="addElement(paperForm.firstAuthor)">添加一作者</el-button>
         </el-form-item>
@@ -21,8 +20,7 @@
         <el-form-item label="二作列表">
             <div v-for="(_, index) in paperForm.secondAuthor" :key="index">
                 <el-input v-model="paperForm.secondAuthor[index]" placeholder="输入二作者姓名"></el-input>
-                <el-button type="danger" icon="el-icon-delete"
-                    @click="removeElement(paperForm.secondAuthor, index)"></el-button>
+                <el-button type="danger" @click="removeElement(paperForm.secondAuthor, index)">移除</el-button>
             </div>
             <el-button type="primary" @click="addElement(paperForm.secondAuthor)">添加二作者</el-button>
         </el-form-item>
@@ -30,8 +28,7 @@
         <el-form-item label="三作列表">
             <div v-for="(_, index) in paperForm.thirdAuthor" :key="index">
                 <el-input v-model="paperForm.thirdAuthor[index]" placeholder="输入三作者姓名"></el-input>
-                <el-button type="danger" icon="el-icon-delete"
-                    @click="removeElement(paperForm.thirdAuthor, index)"></el-button>
+                <el-button type="danger" @click="removeElement(paperForm.thirdAuthor, index)">移除</el-button>
             </div>
             <el-button type="primary" @click="addElement(paperForm.thirdAuthor)">添加三作者</el-button>
         </el-form-item>
@@ -48,7 +45,7 @@
             <div v-for="(field, index) in paperForm.additional" :key="index">
                 <el-input v-model="field.key" placeholder="键" style="width: 100px;"></el-input>
                 <el-input v-model="field.value" placeholder="值"></el-input>
-                <el-button type="danger" icon="el-icon-delete" @click="removeAdditional(index)"></el-button>
+                <el-button type="danger" @click="removeAdditional(index)">移除</el-button>
             </div>
             <el-button type="primary" @click="addAdditional">添加额外字段</el-button>
         </el-form-item>
@@ -68,6 +65,7 @@ import { postWithToken } from '@/utils/request';
 
 const emits = defineEmits(['submit']);
 const paperForm = defineModel<Paper>('paper', { required: true });
+const disableDOI = defineModel<boolean>('disableDOI', { required: true });
 const formRef = ref<InstanceType<typeof ElForm> | null>(null);
 const rules = {
     DOI: [
@@ -101,10 +99,9 @@ const handleSaveDraft = () => {
                 if (res.status === 200) {
                     successAlert('保存草稿成功');
                     emits('submit');
-                } else {
-                    errorAlert('保存草稿失败');
-                    errorAlert(res.data.message);
                 }
+            }).catch((err) => {
+                errorAlert(err.response.data.message);
             });
         } else {
             errorAlert('表单验证失败');
@@ -123,7 +120,7 @@ const validateSubmit = () => {
         errorAlert('至少需要一名一作者');
         return false;
     }
-    paperForm.value.status = Status.Review;
+    paperForm.value.status = 'review';
     return true;
 }
 

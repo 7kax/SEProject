@@ -12,23 +12,14 @@ interface UserInfo {
     address: string;    // address
 }
 
-enum Ccf {
-    A = 'A',
-    B = 'B',
-    C = 'C',
-}
+type Ccf = 'A' | 'B' | 'C';
 
 interface Additional {
     key: string;
     value: string;
 }
 
-enum Status {
-    Approve = 'approve',
-    NotSubmit = 'notSubmit',
-    Reject = 'reject',
-    Review = 'review',
-}
+type Status = 'notSubmit' | 'review' | 'reject' | 'approve';
 
 interface Paper {
     DOI: string;

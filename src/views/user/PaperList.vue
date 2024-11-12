@@ -33,12 +33,15 @@
                     </template>
                 </el-table-column>
             </el-table>
-
-            <el-dialog title="编辑" :visible.sync="isEditing" width="30%" @close="closeEditDialog">
-                <CreatePaperForm :paper="selectedPaper" @submit="submitEdit" />
-            </el-dialog>
+            <el-button type="primary" @click="addPaper">添加论文</el-button>
         </el-main>
     </el-container>
+    <el-dialog title="编辑" v-model="isEditing" @close="closeEditDialog">
+        <CreatePaperForm :paper="selectedPaper" :disableDOI="true" @submit="submitEdit" />
+    </el-dialog>
+    <el-dialog title="添加" v-model="isAdding" @close="closeAddDialog">
+        <CreatePaperForm :paper="newPaper" :disableDOI="false" @submit="submitAdd" />
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -52,7 +55,7 @@ import { errorAlert, infoAlert, successAlert } from '@/utils/alert';
 const papers = ref<Paper[]>([]);
 const refreshPapers = () => {
     const id = JSON.parse(localStorage.getItem('user') as string).id;
-    const url = `/api/papers/${id}`;
+    const url = `/api/papers?id=${id}&doi`;
     const token = localStorage.getItem('token') as string;
     getWithToken(url, token).then((res) => {
         papers.value = res.data.papers;
@@ -64,36 +67,36 @@ onMounted(async () => {
 
 const getStatusType = (status: Status) => {
     switch (status) {
-        case Status.NotSubmit:
+        case 'notSubmit':
             return 'info';
-        case Status.Review:
+        case 'review':
             return 'warning';
-        case Status.Approve:
+        case 'approve':
             return 'success';
-        case Status.Reject:
+        case 'reject':
             return 'danger';
     }
 };
 
 const statusNames = (status: Status) => {
     switch (status) {
-        case Status.NotSubmit:
+        case 'notSubmit':
             return '未提交';
-        case Status.Review:
+        case 'review':
             return '审核中';
-        case Status.Approve:
+        case 'approve':
             return '审核通过';
-        case Status.Reject:
+        case 'reject':
             return '驳回';
     }
 };
 
 const isEditable = (status: Status) => {
-    return status === Status.NotSubmit || status === Status.Reject;
+    return status === 'notSubmit' || status === 'reject';
 };
 
 const canRequestDelete = (status: Status) => {
-    return status === Status.Approve;
+    return status === 'approve';
 };
 
 const isEditing = ref(false);
@@ -124,16 +127,49 @@ const requestDelete = (index: number) => {
         const url = '/api/papers/request/delete?doi=' + doi;
         const token = localStorage.getItem('token') as string;
         postWithToken(url, '', token).then((res) => {
-            if (res.status === 200) {
+            if (res.status === 201) {
                 successAlert('请求删除成功');
-            } else {
-                errorAlert('请求删除失败');
-                errorAlert(res.data.message);
             }
+        }).catch((err) => {
+            errorAlert(err.response.data.message);
         });
     }).catch(() => {
         infoAlert('已取消删除');
     });
+};
+
+const isAdding = ref(false);
+const newPaper = ref<Paper>({} as Paper);
+
+const addPaper = () => {
+    isAdding.value = true;
+    newPaper.value = {
+        DOI: '',
+        title: '',
+        firstAuthor: [],
+        secondAuthor: [],
+        thirdAuthor: [],
+        CCF: 'A',
+        status: 'notSubmit',
+        additional: []
+    };
+};
+const closeAddDialog = () => {
+    isAdding.value = false;
+    newPaper.value = {
+        DOI: '',
+        title: '',
+        firstAuthor: [],
+        secondAuthor: [],
+        thirdAuthor: [],
+        CCF: 'A',
+        status: 'notSubmit',
+        additional: []
+    };
+};
+const submitAdd = () => {
+    closeAddDialog();
+    refreshPapers();
 };
 </script>
 
