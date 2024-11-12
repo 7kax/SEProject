@@ -5,7 +5,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         name: 'HomeUser',
-        component: () => import('@/views/HomeUser.vue'),
+        component: () => import('@/views/user/Home.vue'),
         meta: { requiresAuth: true }
     },
     {
@@ -21,56 +21,56 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/user/profile',
         name: 'UserProfile',
-        component: () => import('@/views/UserProfile.vue'),
+        component: () => import('@/views/user/Profile.vue'),
         meta: { requiresAuth: true }
     },
     {
         path: '/admin',
         name: 'HomeAdmin',
-        component: () => import('@/views/HomeAdmin.vue'),
+        component: () => import('@/views/admin/Home.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
         path: '/admin/papers/board',
         name: 'AdminPaperBoard',
-        component: () => import('@/views/AdminPaperBoard.vue'),
+        component: () => import('@/views/admin/PaperBoard.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
         path: '/admin/request',
         name: 'AdminRequest',
-        component: () => import('@/views/AdminRequest.vue'),
+        component: () => import('@/views/admin/Request.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
         path: '/admin/request/detail',
         name: 'AdminRequestDetail',
-        component: () => import('@/views/AdminRequestDetail.vue'),
+        component: () => import('@/components/AdminRequestDetail.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
         path: '/admin/user',
         name: 'AdminUserList',
-        component: () => import('@/views/AdminUserList.vue'),
+        component: () => import('@/views/admin/UserList.vue'),
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
         path: '/user/papers/board',
         name: 'UserPaperBoard',
-        component: () => import('@/views/UserPaperBoard.vue'),
+        component: () => import('@/views/user/PaperBoard.vue'),
         meta: { requiresAuth: true }
     },
     {
         path: '/user/papers/list',
         name: 'UserPaperList',
-        component: () => import('@/components/UserPaperList.vue'),
+        component: () => import('@/views/user/PaperList.vue'),
         meta: { requiresAuth: true }
     },
     {
         path: '/admin/papers/list',
         name: 'AdminPaperList',
-        component: () => import('@/components/AdminPaperList.vue'),
-        meta: {requiresAuth: true, requiresAdmin: true }
+        component: () => import('@/views/admin/PaperList.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true }
     },
 ];
 
