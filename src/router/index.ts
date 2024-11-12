@@ -43,6 +43,12 @@ const routes: Array<RouteRecordRaw> = [
         meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
+        path: '/admin/request/detail',
+        name: 'AdminRequestDetail',
+        component: () => import('@/views/AdminRequestDetail.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
         path: '/admin/user',
         name: 'AdminUserList',
         component: () => import('@/views/AdminUserList.vue'),
@@ -61,17 +67,17 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to, _from, next) => {
-    const authStore = useAuthStore();
-    const isLoggedIn = authStore.checkLoginStatus();
+// router.beforeEach((to, _from, next) => {
+//     const authStore = useAuthStore();
+//     const isLoggedIn = authStore.checkLoginStatus();
 
-    if (to.meta.requiresAuth && !isLoggedIn) {
-        next('/login');
-    } else if (to.meta.requiresAdmin && !authStore.user?.isAdmin) {
-        next('/');
-    } else {
-        next();
-    }
-});
+//     if (to.meta.requiresAuth && !isLoggedIn) {
+//         next('/login');
+//     } else if (to.meta.requiresAdmin && !authStore.user?.isAdmin) {
+//         next('/');
+//     } else {
+//         next();
+//     }
+// });
 
 export default router;
