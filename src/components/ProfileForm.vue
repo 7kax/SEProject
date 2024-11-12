@@ -25,17 +25,12 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits, watch } from 'vue';
+import { ref, defineEmits } from 'vue';
 import { ElForm } from 'element-plus';
 import { validID } from '@/utils/verify';
 
-// const props = defineProps<{
-//     user: UserInfo;
-//     disableId: boolean;
-// }>();
 const emits = defineEmits(['submit']);
 
-// const userForm = ref({ ...props.user });
 const userForm = defineModel<UserInfo>('user', { required: true });
 const disableId = defineModel<boolean>('disableId', { required: true });
 const formRef = ref<InstanceType<typeof ElForm> | null>(null);
@@ -66,10 +61,6 @@ const rules = {
         { required: false, message: '请输入地址', trigger: 'blur' },
     ],
 };
-
-// watch(userForm, (newVal) => {
-//     emits('updateUser', newVal);
-// }, { deep: true });
 
 const submitForm = () => {
     if (formRef.value) {

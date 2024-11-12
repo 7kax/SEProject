@@ -53,22 +53,8 @@ interface DeleteInfo {
     doi: string;
 }
 
-// enum ApplicationType {
-//     Claim = 'Claim',
-//     Delete = 'Delete'
-// }
-
-// interface Application {
-//     id: string,
-//     name: string,
-//     doi: string,
-//     title: string,
-//     firstAuthor: string,
-//     type: ApplicationType
-
-// }
-
-// interface ApplicationData {
-//     id: string,
-//     doi: string
-// }
+interface AuthInfo {
+    id: string;
+    password: string;
+    isAdmin: boolean;
+}

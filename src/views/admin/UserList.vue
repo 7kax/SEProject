@@ -1,50 +1,52 @@
 <template>
-    <div class="admin-container">
-        <el-table :data="users" style="width: 100%">
-            <el-table-column prop="id" label="学号/工号" width="120" sortable />
-            <el-table-column prop="name" label="姓名" width="120" sortable />
-            <el-table-column prop="email" label="邮箱" width="180" sortable />
-            <el-table-column prop="phone" label="电话" width="120" sortable />
-            <el-table-column prop="address" label="地址" width="120" sortable />
-            <el-table-column label="编辑用户" width="120">
-                <template #default="scope">
-                    <el-button type="primary" @click="modifyUser(scope.row)">编辑用户</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column label="重置密码" width="120">
-                <template #default="scope">
-                    <el-button type="warning" @click="resetPassword(scope.row)">修改密码</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column label="删除用户" width="120">
-                <template #default="scope">
-                    <el-button type="danger" @click="deleteUser(scope.row)">删除用户</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+    <el-container>
+        <el-header>用户列表</el-header>
+        <el-main>
+            <el-table :data="users" fit>
+                <el-table-column prop="id" label="学号/工号" sortable />
+                <el-table-column prop="name" label="姓名" sortable />
+                <el-table-column prop="email" label="邮箱" sortable />
+                <el-table-column prop="phone" label="电话" sortable />
+                <el-table-column prop="address" label="地址" sortable />
+                <el-table-column label="编辑用户" width="120">
+                    <template #default="scope">
+                        <el-button type="primary" @click="modifyUser(scope.row)">编辑用户</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column label="重置密码" width="120">
+                    <template #default="scope">
+                        <el-button type="warning" @click="resetPassword(scope.row)">修改密码</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column label="删除用户" width="120">
+                    <template #default="scope">
+                        <el-button type="danger" @click="deleteUser(scope.row)">删除用户</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-button type="primary" @click="addUser()">添加用户</el-button>
+        </el-main>
+    </el-container>
+    <el-dialog v-model="modifyUserFormVisible" title="编辑用户" width="500">
+        <ProfileForm :user="userForm" @submit="modifyUserRequest()" :disableId="true" />
+    </el-dialog>
 
-        <el-button type="primary" @click="addUser()">添加用户</el-button>
+    <el-dialog v-model="resetPasswordFormVisible" title="重置密码" width="500">
+        <el-form :model="resetPasswordForm" :rules="passwordRules">
+            <el-form-item label="新密码" prop="newPassword" required>
+                <el-input v-model="resetPasswordForm.newPassword" />
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <el-button @click="resetPasswordFormVisible = false">取消</el-button>
+            <el-button type="primary" @click="resetPasswordRequest();">确定</el-button>
+        </template>
+    </el-dialog>
 
-        <el-dialog v-model="modifyUserFormVisible" title="编辑用户" width="500">
-            <UserForm :user="userForm" @submit="modifyUserRequest()" :disableId="true" />
-        </el-dialog>
-
-        <el-dialog v-model="resetPasswordFormVisible" title="重置密码" width="500">
-            <el-form :model="resetPasswordForm" :rules="passwordRules">
-                <el-form-item label="新密码" prop="newPassword" required>
-                    <el-input v-model="resetPasswordForm.newPassword" />
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <el-button @click="resetPasswordFormVisible = false">取消</el-button>
-                <el-button type="primary" @click="resetPasswordRequest();">确定</el-button>
-            </template>
-        </el-dialog>
-
-        <el-dialog v-model="addFormVisible" title="添加用户" width="500">
-            <UserForm :user="userForm" @submit="addRequest" :disableId="false" />
-        </el-dialog>
-    </div>
+    <el-dialog v-model="addFormVisible" title="添加用户" width="500">
+        <!-- <ProfileForm :user="userForm" @submit="addRequest" :disableId="false" /> -->
+        <AuthForm :user="userToAdd" @submit="addRequest" />
+    </el-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -55,21 +57,20 @@ import { ElMessageBox } from 'element-plus';
 import { errorAlert, successAlert, infoAlert } from '@/utils/alert';
 import { deleteWithToken, getWithToken, patchWithToken, postWithToken } from '@/utils/request';
 import { validPassword } from '@/utils/verify';
-import UserForm from '@/components/UserForm.vue';
+import ProfileForm from '@/components/ProfileForm.vue';
+import AuthForm from '@/components/AuthForm.vue';
 
 // 进入网页时, 向后端请求所有用户信息
 const users = ref<UserInfo[]>(example_users);
 const getUsers = () => {
+    const url = '/api/users';
     const token = localStorage.getItem('token') as string;
-    getWithToken('/api/admin', token).then((res) => {
-        console.log(res);
+    getWithToken(url, token).then((res) => {
         if (res.status === 200) {
-            users.value = res.data;
-        } else if (res.status === 401 || res.status === 403) {
-            errorAlert(res.data.message);
-        } else {
-            errorAlert('获取用户信息失败');
+            users.value = res.data.users;
         }
+    }).catch((err) => {
+        errorAlert(err.response.data.message);
     });
 };
 onMounted(() => {
@@ -173,17 +174,20 @@ const deleteUser = (user: UserInfo) => {
 };
 
 // 添加用户相关逻辑
+// 用于缓存添加用户的信息
+const userToAdd = ref<{ id: string, password: string }>({ id: '', password: '' });
 // 控制添加用户对话框的显示
 const addFormVisible = ref(false);
 // 点击添加用户按钮时, 显示添加用户对话框
 const addUser = () => {
-    userForm.value = {} as UserInfo;
+    // userForm.value = {} as UserInfo;
+    userToAdd.value = { id: '', password: '' };
     addFormVisible.value = true;
 };
 // 在添加用户对话框中点击确定时, 发送请求
 const addRequest = () => {
     const url = '/api/users';
-    const data = JSON.stringify(userForm.value);
+    const data = JSON.stringify(userToAdd.value);
     const token = localStorage.getItem('token') as string;
     postWithToken(url, data, token).then((res) => {
         if (res.status === 201) {
@@ -197,11 +201,4 @@ const addRequest = () => {
 };
 </script>
 
-<style scoped>
-.admin-container {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    height: 100%;
-}
-</style>
+<style scoped></style>
