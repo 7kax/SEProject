@@ -3,9 +3,9 @@
     <el-container>
         <el-header>论文列表</el-header>
         <el-main>
-            <el-table :data="papers" style="width: 100%">
-                <el-table-column prop="title" label="论文标题" width="300"></el-table-column>
-                <el-table-column label="作者">
+            <el-table :data="papers" fit>
+                <el-table-column prop="title" label="论文标题"></el-table-column>
+                <el-table-column prop="author" label="作者">
                     <template #default="scope">
                         <span
                             v-for="(author, index) in [...scope.row.firstAuthor, ...scope.row.secondAuthor, ...scope.row.thirdAuthor]"
@@ -14,19 +14,19 @@
                         </span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="CCF" label="CCF分级" width="150"></el-table-column>
-                <el-table-column label="状态">
+                <el-table-column prop="CCF" label="CCF分级" width="120"></el-table-column>
+                <el-table-column prop="status" label="状态" width="120">
                     <template #default="scope">
                         <el-tag :type="getStatusType(scope.row.status)">{{ statusNames(scope.row.status) }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column label="编辑" width="100">
+                <el-table-column label="编辑" width="120">
                     <template #default="scope">
                         <el-button :disabled="!isEditable(scope.row.status)" type="primary"
                             @click="editPaper(scope.$index)">编辑</el-button>
                     </template>
                 </el-table-column>
-                <el-table-column label="请求删除" width="100">
+                <el-table-column label="请求删除" width="120">
                     <template #default="scope">
                         <el-button :disabled="!canRequestDelete(scope.row.status)" type="danger"
                             @click="requestDelete(scope.$index)">请求删除</el-button>
