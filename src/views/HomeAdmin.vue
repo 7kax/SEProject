@@ -4,7 +4,7 @@
 
     <div class="top-nav">
       <button @click="redirectToRequest" class="nav-button">请求管理</button>
-      <button @click="" class="nav-button">论文管理</button>
+      <button @click="redirectToPaperList" class="nav-button">论文管理</button>
       <button @click="redirectToProfileList" class="nav-button">用户账号管理</button>
       <button @click="logout" class="logout-button">登出</button>
     </div>
@@ -29,8 +29,12 @@ const redirectToProfileList = () => {
 };
 
 const redirectToRequest = () => {
-  window.location.href = '/admin/request'
+  window.location.href = '/admin/request';
 };
+
+const redirectToPaperList = () => {
+  window.location.href = 'admin/paperr/list';
+}
 </script>
 
 <style scoped>

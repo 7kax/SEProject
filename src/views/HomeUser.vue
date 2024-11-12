@@ -10,8 +10,8 @@
         </button>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="viewPapers">查看论文</el-dropdown-item>
-            <el-dropdown-item @click="addPaper">新增论文</el-dropdown-item>
+            <el-dropdown-item @click="redirectToPaperList">查看论文</el-dropdown-item>
+            <el-dropdown-item @click="createPaper">新增论文</el-dropdown-item>
             <el-dropdown-item @click="claimPaper">认领论文</el-dropdown-item>
             <el-dropdown-item @click="requestDeletePaper">申请删除论文</el-dropdown-item>
           </el-dropdown-menu>
@@ -25,9 +25,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed, ref} from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus';
+import CreatePaperForm from "@/components/CreatePaperForm.vue";
+import ClaimPaperForm from "@/components/ClaimPaperForm.vue";
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
@@ -41,16 +43,19 @@ const redirectToProfile = () => {
   window.location.href = '/profile';
 };
 
-const viewPapers = () => {
-  // Code to navigate to or display the view papers page
+const redirectToPaperList = () => {
+  window.location.href = '/user/papers/list';
 };
 
-const addPaper = () => {
-  // Code to add a new paper
+const addFormVisible = ref(false);
+const createPaper = () => {
+  CreatePaperForm.value = {};
+  addFormVisible.value = true;
 };
 
 const claimPaper = () => {
-  // Code to claim a paper
+  ClaimPaperForm.value = {};
+  addFormVisible.value = true;
 };
 
 const requestDeletePaper = () => {
