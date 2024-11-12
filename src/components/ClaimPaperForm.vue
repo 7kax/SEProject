@@ -1,6 +1,6 @@
 <!-- 用户认领论文的表单 -->
 <template>
-    <h3>论文认领</h3>
+    <h1>论文认领</h1>
     <div>请输入查询的DOI<input v-model = "DOI"><button @click="queryPaperWithDOI">查找</button></div>
     <el-table :data="papers" style="width: 100%">
             <el-table-column prop="DOI" label="DOI" width="120" sortable />
@@ -20,9 +20,9 @@
 
 <script lang="ts" setup name = "ClaimPaperForm">
 import { ref } from 'vue'
-import { getWithToken } from '@/utils/request';
+import { getWithToken, postWithToken } from '@/utils/request';
 import { useAuthStore } from '@/stores/auth';
-import { errorAlert } from '@/utils/alert';
+import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
@@ -49,6 +49,19 @@ const queryPaperWithDOI = () => {
 }
 
 const claimPaper = (paper:Paper) => {
-    // TODO
+    const url = '/api/papers/request/claim'
+    const token = user!.token;
+    const data = JSON.stringify({ doi:paper.DOI })
+    postWithToken(url, data, token).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+            successAlert('申请成功，请在用户论文列表查看审批进程')
+        } else if (res.status === 401) {
+            errorAlert('请先登录');
+            router.push('/login');
+        } else {
+            errorAlert('论文信息错误，请联系管理员');
+        }
+    })
 }
 </script>
