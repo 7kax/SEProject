@@ -51,7 +51,7 @@ const handleLogin = async () => {
     post(url, data).then((res) => {
         if (res.status === 200) {
             const user = {
-                id: res.data.id,
+                id: data.id,
                 token: res.data.token,
                 isAdmin: isAdmin.value,
             };

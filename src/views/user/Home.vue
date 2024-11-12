@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <h1>欢迎回来, {{ user?.id }}!</h1>
+    <h1>欢迎回来, {{ user.id }}!</h1>
 
     <div class="top-nav">
       <el-dropdown>
@@ -25,18 +25,19 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, ref} from 'vue';
+import { computed, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus';
 import CreatePaperForm from "@/components/CreatePaperForm.vue";
 import ClaimPaperForm from "@/components/ClaimPaperForm.vue";
+import router from '@/router';
 
 const authStore = useAuthStore();
-const user = computed(() => authStore.user);
+const user = JSON.parse(localStorage.getItem('user') as string);
 
 const logout = () => {
   authStore.logout();
-  window.location.href = '/login';
+  router.push('/');
 };
 
 const redirectToProfile = () => {
@@ -87,8 +88,10 @@ body {
 
 /* Button Styling for Nav Buttons with Grey Color */
 .nav-button {
-  background-color: white; /* Light grey background */
-  color: #333; /* Darker grey text */
+  background-color: white;
+  /* Light grey background */
+  color: #333;
+  /* Darker grey text */
   border: none;
   padding: 8px 15px;
   cursor: pointer;
@@ -100,13 +103,15 @@ body {
 }
 
 .nav-button:hover {
-  background-color: #ddd; /* Darker grey on hover */
+  background-color: #ddd;
+  /* Darker grey on hover */
 }
 
 .nav-button .dropdown-arrow {
   margin-left: 5px;
   font-size: 12px;
-  color: #333; /* Matching text color */
+  color: #333;
+  /* Matching text color */
 }
 
 /* Custom Styling for Logout Button */
@@ -123,7 +128,8 @@ body {
 
 .logout-button:hover {
   background-color: #888888;
-  color: white; /* White text on hover */
+  color: white;
+  /* White text on hover */
 }
 
 /* Dropdown Item Styling */
