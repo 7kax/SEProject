@@ -25,7 +25,6 @@ import { validPassword, validID } from '@/utils/verify';
 import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
 import { post } from '@/utils/request';
-import { log } from 'console';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -58,7 +57,7 @@ const handleLogin = async () => {
             };
             authStore.login(user);
             successAlert(isAdmin.value ? '管理员登录成功' : '登录成功');
-            router.push(isAdmin.value ? '/admin' : '/');
+            router.push(isAdmin.value ? '/admin' : '/user');
         }
     }).catch((err) => {
         errorAlert(err.response.data.message);
