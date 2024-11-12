@@ -42,3 +42,23 @@ interface Paper {
     additional: Additional[];
     url?: string;
 }
+
+enum ApplicationType {
+    Claim = 'Claim',
+    Delete = 'Delete'
+}
+
+interface Application {
+    id : string,
+    name: string,
+    doi: string,
+    title: string,
+    firstAuthor : string,
+    type: ApplicationType
+
+}
+
+interface ApplicationData{
+    id : string,
+    doi : string
+}

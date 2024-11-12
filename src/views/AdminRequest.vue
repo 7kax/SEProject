@@ -37,27 +37,6 @@ const router = useRouter();
 
 const user = authStore.user;
 
-enum ApplicationType {
-    Claim = '论文认领',
-    Delete = '论文删除'
-}
-
-
-interface Application {
-    id : string,
-    name: string,
-    doi: string,
-    title: string,
-    firstAuthor : string,
-    type: ApplicationType
-
-}
-
-interface ApplicationData{
-    id : string,
-    doi : string
-}
-
 const claims = ref(new Array<Application>)
 const claimDatas = ref(new Array<ApplicationData>)
 const deletes = ref(new Array<Application>)
@@ -71,7 +50,7 @@ const refreshAppications = () => {
     const urlGetDelete = '/api/papers/request/delete'
     const token = user!.token;
 
-    //获取申请信息
+    // 获取申请信息
     getWithToken(urlGetClaim,token).then((res) => {
         console.log(res);
         if (res.status === 200) {
@@ -177,14 +156,6 @@ const refreshAppications = () => {
         deletes.value.push(deletion)
     })
 
-    // deletes.value.push({
-    //     id : '0',
-    //     name: 'John',
-    //     doi: '101.1',
-    //     title: 'test',
-    //     firstAuthor : 'John',
-    //     type: ApplicationType.Delete
-    // })
 }
 
 onMounted(refreshAppications)
