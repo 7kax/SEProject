@@ -31,11 +31,9 @@ import { getWithToken, } from '@/utils/request';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import { errorAlert, } from '@/utils/alert';
-import AdminRequestDetail from './AdminRequestDetail.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
-
 
 const user = authStore.user;
 
@@ -178,16 +176,26 @@ const refreshAppications = () => {
 
         deletes.value.push(deletion)
     })
+
+    // deletes.value.push({
+    //     id : '0',
+    //     name: 'John',
+    //     doi: '101.1',
+    //     title: 'test',
+    //     firstAuthor : 'John',
+    //     type: ApplicationType.Delete
+    // })
 }
 
-onMounted(refreshAppications())
+onMounted(refreshAppications)
 
 const audit = ( application : Application) => {
     router.push({
         name : 'AdminRequestDetail',
         query : {
             id : application.id,
-            doi : application.doi
+            doi : application.doi,
+            type: application.type
         }
     })
 }
