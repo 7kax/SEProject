@@ -66,7 +66,7 @@ const handleRegister = () => {
 };
 
 const redirectToLogin = () => {
-    router.push('/login');
+    router.push('/');
 };
 </script>
 
