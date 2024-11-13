@@ -13,7 +13,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'https://apifoxmock.com/m1/5405626-5079443-default',
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, '')
       }
