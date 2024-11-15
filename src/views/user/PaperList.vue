@@ -45,27 +45,39 @@
 </template>
 
 <script setup lang="ts">
-import { getWithToken, postWithToken } from '@/utils/request';
 import { onMounted, ref } from 'vue';
 import CreatePaperForm from '@/components/CreatePaperForm.vue';
 import { ElMessageBox } from 'element-plus';
 import { errorAlert, infoAlert, successAlert } from '@/utils/alert';
+import { fetchPaper } from '@/requests/paper';
+import { addDelete } from '@/requests/application';
 
 // 组件挂载时, 向后端请求论文数据
 const papers = ref<Paper[]>([]);
 const refreshPapers = () => {
-    const id = JSON.parse(localStorage.getItem('user') as string).id;
-    const url = `/api/papers?id=${id}&doi`;
-    const token = localStorage.getItem('token') as string;
-    getWithToken(url, token).then((res) => {
-        papers.value = res.data.papers;
+    // const id = JSON.parse(localStorage.getItem('user') as string).id;
+    // const url = `/api/papers?id=${id}&doi`;
+    // const token = localStorage.getItem('token') as string;
+    // getWithToken(url, token).then((res) => {
+    //     papers.value = res.data.papers;
+    // });
+
+    const params = {
+        id: '',
+        doi: '',
+    };
+
+    fetchPaper(params).then((res) => {
+        papers.value = res.papers;
+    }).catch((err) => {
+        errorAlert(err.response.data.message);
     });
 };
 onMounted(async () => {
     refreshPapers();
 })
 
-const getStatusType = (status: Status) => {
+const getStatusType = (status: string) => {
     switch (status) {
         case 'notSubmit':
             return 'info';
@@ -78,7 +90,7 @@ const getStatusType = (status: Status) => {
     }
 };
 
-const statusNames = (status: Status) => {
+const statusNames = (status: string) => {
     switch (status) {
         case 'notSubmit':
             return '未提交';
@@ -91,11 +103,11 @@ const statusNames = (status: Status) => {
     }
 };
 
-const isEditable = (status: Status) => {
+const isEditable = (status: string) => {
     return status === 'notSubmit' || status === 'reject';
 };
 
-const canRequestDelete = (status: Status) => {
+const canRequestDelete = (status: string) => {
     return status === 'approve';
 };
 
@@ -123,13 +135,19 @@ const requestDelete = (index: number) => {
         cancelButtonText: '取消',
         type: 'warning',
     }).then(() => {
-        const doi = Buffer.from(papers.value[index].DOI).toString('base64');
-        const url = '/api/papers/request/delete?doi=' + doi;
-        const token = localStorage.getItem('token') as string;
-        postWithToken(url, '', token).then((res) => {
-            if (res.status === 201) {
-                successAlert('请求删除成功');
-            }
+        // const doi = Buffer.from(papers.value[index].DOI).toString('base64');
+        // const url = '/api/papers/request/delete?doi=' + doi;
+        // const token = localStorage.getItem('token') as string;
+        // postWithToken(url, '', token).then((res) => {
+        //     if (res.status === 201) {
+        //         successAlert('请求删除成功');
+        //     }
+        // }).catch((err) => {
+        //     errorAlert(err.response.data.message);
+        // });
+
+        addDelete({ doi: papers.value[index].DOI }).then((_res) => {
+            successAlert('请求删除成功');
         }).catch((err) => {
             errorAlert(err.response.data.message);
         });

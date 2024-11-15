@@ -11,8 +11,6 @@
 </template>
 
 <script lang="ts" setup>
-import ClaimPaperForm from "@/components/ClaimPaperForm.vue";
-import CreatePaperForm from "@/components/CreatePaperForm.vue";
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
@@ -29,29 +27,6 @@ onMounted(() => {
 const logout = () => {
   authStore.logout();
   router.push('/');
-};
-
-const redirectToProfile = () => {
-  window.location.href = '/user/profile';
-};
-
-const redirectToPaperList = () => {
-  window.location.href = '/user/paper_list';
-};
-
-const addFormVisible = ref(false);
-const createPaper = () => {
-  CreatePaperForm.value = {};
-  addFormVisible.value = true;
-};
-
-const claimPaper = () => {
-  ClaimPaperForm.value = {};
-  addFormVisible.value = true;
-};
-
-const requestDeletePaper = () => {
-  // Code to request paper deletion
 };
 </script>
 

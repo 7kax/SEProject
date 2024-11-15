@@ -31,20 +31,25 @@
 import { onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { validPassword } from '@/utils/verify';
-import { getWithToken, patchWithToken } from '@/utils/request';
 import { errorAlert, successAlert } from '@/utils/alert';
+import { fetchUser, updatePassword, updateUser } from '@/requests/user';
 
 const authStore = useAuthStore();
-const user = authStore.user;
 const userInfo = ref<UserInfo>({} as UserInfo);
 
 // 进入页面时, 向后端请求用户信息
 const getProfile = () => {
-    const id = JSON.parse(localStorage.getItem('user') as string).id;
-    const url = `/api/users/${id}`;
-    const token = localStorage.getItem('token') as string;
-    getWithToken(url, token).then((res) => {
-        userInfo.value = res.data.user;
+    // const id = JSON.parse(localStorage.getItem('user') as string).id;
+    // const url = `/api/users/${id}`;
+    // const token = localStorage.getItem('token') as string;
+    // getWithToken(url, token).then((res) => {
+    //     userInfo.value = res.data.user;
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    fetchUser({ id: authStore.user!.id }).then((res) => {
+        userInfo.value = res.user;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
@@ -80,15 +85,25 @@ const handlePasswordChange = () => {
         oldPassword: oldPassword.value,
         newPassword: newPassword.value,
     };
-    const token = user!.token;
-    patchWithToken(`/api/users/${user!.id}/password`, data, token).then((res) => {
-        if (res.status === 200) {
-            successAlert('修改成功');
-            oldPassword.value = '';
-            newPassword.value = '';
-            newPasswordConfirm.value = '';
-            onChangingPassword.value = false;
-        }
+    // const token = user!.token;
+    // patchWithToken(`/api/users/${user!.id}/password`, data, token).then((res) => {
+    //     if (res.status === 200) {
+    //         successAlert('修改成功');
+    //         oldPassword.value = '';
+    //         newPassword.value = '';
+    //         newPasswordConfirm.value = '';
+    //         onChangingPassword.value = false;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    updatePassword(data, { id: authStore.user!.id }).then((_res) => {
+        successAlert('修改成功');
+        oldPassword.value = '';
+        newPassword.value = '';
+        newPasswordConfirm.value = '';
+        onChangingPassword.value = false;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
@@ -97,15 +112,23 @@ const handlePasswordChange = () => {
 // 修改个人信息
 const onChangingInfo = ref(false);
 const handleInfoChanging = () => {
-    const url = `/api/users/${userInfo.value.id}`;
-    const data = JSON.stringify(userInfo.value);
-    const token = user!.token;
-    patchWithToken(url, data, token).then((res) => {
-        if (res.status === 200) {
-            successAlert('修改成功');
-            onChangingInfo.value = false;
-            getProfile();
-        }
+    // const url = `/api/users/${userInfo.value.id}`;
+    // const data = JSON.stringify(userInfo.value);
+    // const token = user!.token;
+    // patchWithToken(url, data, token).then((res) => {
+    //     if (res.status === 200) {
+    //         successAlert('修改成功');
+    //         onChangingInfo.value = false;
+    //         getProfile();
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    updateUser(userInfo.value).then((_res) => {
+        successAlert('修改成功');
+        onChangingInfo.value = false;
+        getProfile();
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });

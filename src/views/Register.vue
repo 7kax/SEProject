@@ -25,7 +25,7 @@ import { ref } from 'vue';
 import { validPassword, validID } from '@/utils/verify';
 import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
-import { post } from "@/utils/request.ts";
+import { addUser } from '@/requests/user';
 
 const router = useRouter();
 const id = ref('');
@@ -51,17 +51,12 @@ const handleRegister = () => {
         id: id.value,
         password: password.value,
     };
-    post('/api/register', data).then((res) => {
-        console.log(res);
-        const data = res.data;
-        if (res.status === 201) {
-            successAlert('注册成功!');
-            router.push('/');
-        } else if (res.status === 400) {
-            errorAlert(data.message);
-        } else if (res.status === 409) {
-            errorAlert(data.message);
-        }
+
+    addUser(data).then((_res) => {
+        successAlert('注册成功!');
+        router.push('/');
+    }).catch((err) => {
+        errorAlert(err.message);
     });
 };
 

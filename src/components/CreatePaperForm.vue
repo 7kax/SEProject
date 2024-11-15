@@ -61,7 +61,7 @@
 import { ref } from 'vue';
 import { ElForm } from 'element-plus';
 import { errorAlert, successAlert } from '@/utils/alert';
-import { postWithToken } from '@/utils/request';
+import { addPaper } from '@/requests/paper';
 
 const emits = defineEmits(['submit']);
 const paperForm = defineModel<Paper>('paper', { required: true });
@@ -83,7 +83,7 @@ const removeAdditional = (index: number) => {
     paperForm.value.additional.splice(index, 1);
 };
 const addAdditional = () => {
-    paperForm.value.additional.push({ key: '', value: '' });
+    paperForm.value.additional.push({ key: 'type', value: '' });
 };
 
 const handleSaveDraft = () => {
@@ -92,14 +92,21 @@ const handleSaveDraft = () => {
     }
     formRef.value.validate((valid) => {
         if (valid) {
-            const url = '/api/papers';
-            const data = JSON.stringify(paperForm.value);
-            const token = localStorage.getItem('token') as string;
-            postWithToken(url, data, token).then((res) => {
-                if (res.status === 200) {
-                    successAlert('保存草稿成功');
-                    emits('submit');
-                }
+            // const url = '/api/papers';
+            // const data = JSON.stringify(paperForm.value);
+            // const token = localStorage.getItem('token') as string;
+            // postWithToken(url, data, token).then((res) => {
+            //     if (res.status === 200) {
+            //         successAlert('保存草稿成功');
+            //         emits('submit');
+            //     }
+            // }).catch((err) => {
+            //     errorAlert(err.response.data.message);
+            // });
+
+            addPaper(paperForm.value).then((_res) => {
+                successAlert('保存草稿成功');
+                emits('submit');
             }).catch((err) => {
                 errorAlert(err.response.data.message);
             });
@@ -130,17 +137,24 @@ const handleSubmit = () => {
     }
     formRef.value.validate((valid) => {
         if (valid && validateSubmit()) {
-            const url = '/api/papers';
-            const data = JSON.stringify(paperForm.value);
-            const token = localStorage.getItem('token') as string;
-            postWithToken(url, data, token).then((res) => {
-                if (res.status === 200) {
-                    successAlert('提交成功');
-                    emits('submit');
-                } else {
-                    errorAlert('提交失败');
-                    errorAlert(res.data.message);
-                }
+            // const url = '/api/papers';
+            // const data = JSON.stringify(paperForm.value);
+            // const token = localStorage.getItem('token') as string;
+            // postWithToken(url, data, token).then((res) => {
+            //     if (res.status === 200) {
+            //         successAlert('提交成功');
+            //         emits('submit');
+            //     } else {
+            //         errorAlert('提交失败');
+            //         errorAlert(res.data.message);
+            //     }
+            // });
+
+            addPaper(paperForm.value).then((_res) => {
+                successAlert('提交成功');
+                emits('submit');
+            }).catch((err) => {
+                errorAlert(err.response.data.message);
             });
         } else {
             errorAlert('表单验证失败');

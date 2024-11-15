@@ -24,7 +24,7 @@ import { useAuthStore } from '@/stores/auth';
 import { validPassword, validID } from '@/utils/verify';
 import { errorAlert, successAlert } from '@/utils/alert';
 import { useRouter } from 'vue-router';
-import { post } from '@/utils/request';
+import { adminLogin, userLogin } from '@/requests/user';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -46,22 +46,34 @@ const handleLogin = async () => {
         id: id.value,
         password: password.value,
     };
-    const url = isAdmin.value ? '/api/admin/login' : '/api/login';
 
-    post(url, data).then((res) => {
-        if (res.status === 200) {
+    if (!isAdmin.value) {
+        userLogin(data).then((res) => {
             const user = {
                 id: data.id,
-                token: res.data.token,
+                token: res.token,
                 isAdmin: isAdmin.value,
             };
             authStore.login(user);
-            successAlert(isAdmin.value ? '管理员登录成功' : '登录成功');
-            router.push(isAdmin.value ? '/admin' : '/user');
-        }
-    }).catch((err) => {
-        errorAlert(err.response.data.message);
-    });
+            successAlert('登录成功');
+            router.push('/user');
+        }).catch((err) => {
+            errorAlert(err.response.data.message);
+        });
+    } else {
+        adminLogin(data).then((res) => {
+            const user = {
+                id: data.id,
+                token: res.token,
+                isAdmin: isAdmin.value,
+            };
+            authStore.login(user);
+            successAlert('管理员登录成功');
+            router.push('/admin');
+        }).catch((err) => {
+            errorAlert(err.response.data.message);
+        });
+    }
 };
 const redirectToRegister = () => {
     router.push('/register');

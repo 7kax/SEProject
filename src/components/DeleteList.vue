@@ -13,46 +13,64 @@
 </template>
 
 <script setup lang="ts">
+import { fetchDelete } from '@/requests/application';
 import { errorAlert, successAlert } from '@/utils/alert';
-import { deleteWithToken, getWithToken } from '@/utils/request';
 import { onMounted, ref } from 'vue';
 
 const deletes = ref<DeleteInfo[]>([]);
 const getDeletes = () => {
-    const url = '/api/papers/request/delete';
-    const token = localStorage.getItem('token') as string;
-    getWithToken(url, token).then((res) => {
-        if (res.status === 200) {
-            deletes.value = res.data.deletes;
-        }
+    // const url = '/api/papers/request/delete';
+    // const token = localStorage.getItem('token') as string;
+    // getWithToken(url, token).then((res) => {
+    //     if (res.status === 200) {
+    //         deletes.value = res.data.deletes;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    fetchDelete().then((res) => {
+        deletes.value = res.deletes;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
 };
 const removeDelete = async (Delete: DeleteInfo) => {
-    const id = Delete.id;
-    const doi = Buffer.from(Delete.doi).toString('base64');
-    const url = `/api/papers/request/delete?id=${id}&doi=${doi}`;
-    const token = localStorage.getItem('token') as string;
+    // const id = Delete.id;
+    // const doi = Buffer.from(Delete.doi).toString('base64');
+    // const url = `/api/papers/request/delete?id=${id}&doi=${doi}`;
+    // const token = localStorage.getItem('token') as string;
     var flag = false;
-    await deleteWithToken(url, token).then((res) => {
-        if (res.status === 204) {
-            flag = true;
-        }
+    // await deleteWithToken(url, token).then((res) => {
+    //     if (res.status === 204) {
+    //         flag = true;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    await removeDelete(Delete).then((_res) => {
+        flag = true;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
     return flag;
 };
 const deletePaper = async (doi: string) => {
-    doi = Buffer.from(doi).toString('base64');
-    const url = `/api/papers/${doi}`;
-    const token = localStorage.getItem('token') as string;
+    // doi = Buffer.from(doi).toString('base64');
+    // const url = `/api/papers/${doi}`;
+    // const token = localStorage.getItem('token') as string;
     var flag = false;
-    await deleteWithToken(url, token).then((res) => {
-        if (res.status === 204) {
-            flag = true;
-        }
+    // await deleteWithToken(url, token).then((res) => {
+    //     if (res.status === 204) {
+    //         flag = true;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    await deletePaper(doi).then((_res) => {
+        flag = true;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });

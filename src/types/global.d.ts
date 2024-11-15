@@ -12,25 +12,19 @@ interface UserInfo {
     address: string;    // address
 }
 
-type Ccf = 'A' | 'B' | 'C';
-
-interface Additional {
-    key: string;
-    value: string;
-}
-
-type Status = 'notSubmit' | 'review' | 'reject' | 'approve';
-
 interface Paper {
     DOI: string;
     title: string;
     firstAuthor: string[];
     secondAuthor: string[];
     thirdAuthor: string[];
-    CCF: Ccf;
-    status: Status;
+    CCF: 'A' | 'B' | 'C';
+    status: 'notSubmit' | 'review' | 'reject' | 'approve';
     recommend?: string;
-    additional: Additional[];
+    additional: {
+        key: "correspondingAuthor" | "pageCount" | "conferenceOrPeriodical" | "acronym" | "publisher" | "fund" | "submitTime" | "receiptTime" | "publishTime" | "type";
+        value: string;
+    }[];
     url?: string;
 }
 

@@ -21,24 +21,35 @@
 </template>
 
 <script setup lang="ts">
+import { fetchPaper } from '@/requests/paper';
 import { errorAlert } from '@/utils/alert';
-import { getWithToken } from '@/utils/request';
 import { onMounted, ref } from 'vue';
 
 // 组件挂载时, 向后端请求论文数据
 const papers = ref<Paper[]>([]);
 const refreshPapers = () => {
-    const url = `/api/papers?id&doi`;
-    const token = localStorage.getItem('token') as string;
-    getWithToken(url, token).then((res) => {
-        if (res.status === 200) {
-            papers.value = res.data.papers;
+    // const url = `/api/papers?id&doi`;
+    // const token = localStorage.getItem('token') as string;
+    // getWithToken(url, token).then((res) => {
+    //     if (res.status === 200) {
+    //         papers.value = res.data.papers;
 
-            // 删去papers中status不为"审核通过"的元素
-            papers.value = papers.value.filter((paper) => paper.status === 'approve');
-        }
+    //         // 删去papers中status不为"审核通过"的元素
+    //         papers.value = papers.value.filter((paper) => paper.status === 'approve');
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.res.data.message);
+    // });
+
+    const params = {
+        id: '',
+        doi: '',
+    };
+
+    fetchPaper(params).then((res) => {
+        papers.value = res.papers;
     }).catch((err) => {
-        errorAlert(err.res.data.message);
+        errorAlert(err.response.data.message);
     });
 };
 onMounted(() => {

@@ -13,47 +13,70 @@
 </template>
 
 <script setup lang="ts">
+import { fetchClaim, removeClaim } from '@/requests/application';
+import { addPaperAuthor } from '@/requests/paper';
 import { errorAlert, successAlert } from '@/utils/alert';
-import { deleteWithToken, getWithToken, postWithToken } from '@/utils/request';
 import { onMounted, ref } from 'vue';
 
 const claims = ref<ClaimInfo[]>([]);
 const getClaims = () => {
-    const url = '/api/papers/request/claim';
-    const token = localStorage.getItem('token') as string;
-    getWithToken(url, token).then((res) => {
-        if (res.status === 200) {
-            claims.value = res.data.claims;
-        }
+    // const url = '/api/papers/request/claim';
+    // const token = localStorage.getItem('token') as string;
+    // getWithToken(url, token).then((res) => {
+    //     if (res.status === 200) {
+    //         claims.value = res.data.claims;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    fetchClaim().then((res) => {
+        claims.value = res.claims;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
 };
 const deleteClaim = async (claim: ClaimInfo) => {
-    const id = claim.id;
-    const doi = Buffer.from(claim.doi).toString('base64');
-    const url = '/api/papers/request/claim?id=' + id + '&doi=' + doi;
-    const token = localStorage.getItem('token') as string;
+    // const id = claim.id;
+    // const doi = Buffer.from(claim.doi).toString('base64');
+    // const url = '/api/papers/request/claim?id=' + id + '&doi=' + doi;
+    // const token = localStorage.getItem('token') as string;
+    // var flag = false;
+    // await deleteWithToken(url, token).then((res) => {
+    //     if (res.status === 204) {
+    //         flag = true;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+    // return flag;
+
     var flag = false;
-    await deleteWithToken(url, token).then((res) => {
-        if (res.status === 204) {
-            flag = true;
-        }
+    await removeClaim(claim).then((_res) => {
+        flag = true;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
     return flag;
 };
 const addAuthorship = async (claim: ClaimInfo) => {
-    const id = claim.id;
-    const doi = Buffer.from(claim.doi).toString('base64');
-    const url = `/api/papers/author?id=${id}&doi=${doi}`;
-    const token = localStorage.getItem('token') as string;
+    // const id = claim.id;
+    // const doi = Buffer.from(claim.doi).toString('base64');
+    // const url = `/api/papers/author?id=${id}&doi=${doi}`;
+    // const token = localStorage.getItem('token') as string;
+    // var flag = false;
+    // await postWithToken(url, {}, token).then((res) => {
+    //     if (res.status === 200) {
+    //         flag = true;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+    // return flag;
+
     var flag = false;
-    await postWithToken(url, {}, token).then((res) => {
-        if (res.status === 200) {
-            flag = true;
-        }
+    await addPaperAuthor(claim).then((_res) => {
+        flag = true;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });

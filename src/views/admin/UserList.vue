@@ -24,7 +24,7 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <el-button type="primary" @click="addUser()">添加用户</el-button>
+            <el-button type="primary" @click="doAddUser()">添加用户</el-button>
         </el-main>
     </el-container>
     <el-dialog v-model="modifyUserFormVisible" title="编辑用户" width="500">
@@ -55,20 +55,26 @@ import example_user from '@/data/example_user.json';
 import { ref, onMounted } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import { errorAlert, successAlert, infoAlert } from '@/utils/alert';
-import { deleteWithToken, getWithToken, patchWithToken, postWithToken } from '@/utils/request';
 import { validPassword } from '@/utils/verify';
 import ProfileForm from '@/components/ProfileForm.vue';
 import AuthForm from '@/components/AuthForm.vue';
+import { addUser, fetchUsers, removeUser, updatePassword, updateUser } from '@/requests/user';
 
 // 进入网页时, 向后端请求所有用户信息
 const users = ref<UserInfo[]>(example_users);
 const getUsers = () => {
-    const url = '/api/users';
-    const token = localStorage.getItem('token') as string;
-    getWithToken(url, token).then((res) => {
-        if (res.status === 200) {
-            users.value = res.data.users;
-        }
+    // const url = '/api/users';
+    // const token = localStorage.getItem('token') as string;
+    // getWithToken(url, token).then((res) => {
+    //     if (res.status === 200) {
+    //         users.value = res.data.users;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    fetchUsers().then((res) => {
+        users.value = res.users;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
@@ -94,15 +100,23 @@ const modifyUser = (user: UserInfo) => {
 };
 // 在编辑用户对话框中点击确定时, 发送请求
 const modifyUserRequest = () => {
-    const url = `/api/users/${userForm.value.id}`;
-    const data = JSON.stringify(userForm.value);
-    const token = localStorage.getItem('token') as string;
-    patchWithToken(url, data, token).then((res) => {
-        if (res.status === 200) {
-            successAlert('修改用户信息成功');
-            modifyUserFormVisible.value = false;
-            getUsers();
-        }
+    // const url = `/api/users/${userForm.value.id}`;
+    // const data = JSON.stringify(userForm.value);
+    // const token = localStorage.getItem('token') as string;
+    // patchWithToken(url, data, token).then((res) => {
+    //     if (res.status === 200) {
+    //         successAlert('修改用户信息成功');
+    //         modifyUserFormVisible.value = false;
+    //         getUsers();
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    updateUser(userForm.value).then((_res) => {
+        successAlert('修改用户信息成功');
+        modifyUserFormVisible.value = false;
+        getUsers();
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
@@ -135,17 +149,24 @@ const resetPassword = (user: UserInfo) => {
 };
 // 在重置密码对话框中点击确定时, 发送请求
 const resetPasswordRequest = () => {
-    const url = `/api/users/${userForm.value.id}/password`;
-    const data = JSON.stringify({
+    // const url = `/api/users/${userForm.value.id}/password`;
+    const data = {
         oldPassword: '',
         newPassword: resetPasswordForm.value.newPassword,
-    })
-    const token = localStorage.getItem('token') as string;
-    patchWithToken(url, data, token).then((res) => {
-        if (res.status === 200) {
-            successAlert('重置密码成功');
-            resetPasswordFormVisible.value = false;
-        }
+    };
+    // const token = localStorage.getItem('token') as string;
+    // patchWithToken(url, data, token).then((res) => {
+    //     if (res.status === 200) {
+    //         successAlert('重置密码成功');
+    //         resetPasswordFormVisible.value = false;
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    updatePassword(data, { id: userForm.value.id }).then((_res) => {
+        successAlert('重置密码成功');
+        resetPasswordFormVisible.value = false;
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });
@@ -158,13 +179,20 @@ const deleteUser = (user: UserInfo) => {
         cancelButtonText: '取消',
         type: 'warning',
     }).then(() => {
-        const url = `/api/users/${user.id}`;
-        const token = localStorage.getItem('token') as string;
-        deleteWithToken(url, token).then((res) => {
-            if (res.status === 204) {
-                successAlert('删除用户成功');
-                getUsers();
-            }
+        // const url = `/api/users/${user.id}`;
+        // const token = localStorage.getItem('token') as string;
+        // deleteWithToken(url, token).then((res) => {
+        //     if (res.status === 204) {
+        //         successAlert('删除用户成功');
+        //         getUsers();
+        //     }
+        // }).catch((err) => {
+        //     errorAlert(err.response.data.message);
+        // });
+
+        removeUser({ id: user.id }).then((_res) => {
+            successAlert('删除用户成功');
+            getUsers();
         }).catch((err) => {
             errorAlert(err.response.data.message);
         });
@@ -179,22 +207,30 @@ const userToAdd = ref<{ id: string, password: string }>({ id: '', password: '' }
 // 控制添加用户对话框的显示
 const addFormVisible = ref(false);
 // 点击添加用户按钮时, 显示添加用户对话框
-const addUser = () => {
+const doAddUser = () => {
     // userForm.value = {} as UserInfo;
     userToAdd.value = { id: '', password: '' };
     addFormVisible.value = true;
 };
 // 在添加用户对话框中点击确定时, 发送请求
 const addRequest = () => {
-    const url = '/api/users';
-    const data = JSON.stringify(userToAdd.value);
-    const token = localStorage.getItem('token') as string;
-    postWithToken(url, data, token).then((res) => {
-        if (res.status === 201) {
-            successAlert('添加用户成功');
-            addFormVisible.value = false;
-            getUsers();
-        }
+    // const url = '/api/users';
+    // const data = JSON.stringify(userToAdd.value);
+    // const token = localStorage.getItem('token') as string;
+    // postWithToken(url, data, token).then((res) => {
+    //     if (res.status === 201) {
+    //         successAlert('添加用户成功');
+    //         addFormVisible.value = false;
+    //         getUsers();
+    //     }
+    // }).catch((err) => {
+    //     errorAlert(err.response.data.message);
+    // });
+
+    addUser(userToAdd.value).then((_res) => {
+        successAlert('添加用户成功');
+        addFormVisible.value = false;
+        getUsers();
     }).catch((err) => {
         errorAlert(err.response.data.message);
     });

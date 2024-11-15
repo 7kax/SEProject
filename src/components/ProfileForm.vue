@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { ElForm } from 'element-plus';
 import { validID } from '@/utils/verify';
 
