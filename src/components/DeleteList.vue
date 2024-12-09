@@ -99,4 +99,9 @@ const refuse = async (Delete: DeleteInfo) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+h2{
+    margin-bottom: 40px;
+    margin-top: 10px;
+}
+</style>
