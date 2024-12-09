@@ -101,4 +101,9 @@ const refuse = async (claim: ClaimInfo) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+h2{
+    margin-bottom: 40px;
+    margin-top: 10px;
+}
+</style>
