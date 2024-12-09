@@ -24,7 +24,7 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <el-button type="primary" @click="doAddUser()">添加用户</el-button>
+            <el-button id="addUserButton" type="primary" @click="doAddUser()">添加用户</el-button>
         </el-main>
     </el-container>
     <el-dialog v-model="modifyUserFormVisible" title="编辑用户" width="500">
@@ -237,4 +237,20 @@ const addRequest = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-header{
+    font-size: 40px;
+    margin-bottom: 40px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+#addUserButton{
+    position: absolute;
+    right: 100px;
+    margin-top: 20px;
+    background-color:green;
+}
+#addUserButton:hover{
+    background-color: rgb(155, 193, 155);
+}
+</style>
