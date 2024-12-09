@@ -4,7 +4,7 @@
         <el-header>论文列表</el-header>
         <el-main>
             <el-table :data="papers" fit>
-                <el-table-column prop="title" label="论文标题"></el-table-column>
+                <el-table-column prop="title" label="论文标题" width="500"></el-table-column>
                 <el-table-column label="作者">
                     <template #default="scope">
                         <span
@@ -26,7 +26,18 @@ import { errorAlert } from '@/utils/alert';
 import { onMounted, ref } from 'vue';
 
 // 组件挂载时, 向后端请求论文数据
-const papers = ref<Paper[]>([]);
+const papers = ref<Paper[]>([
+    // {
+    //     DOI: '111',
+    //     title: 'title1',
+    //     firstAuthor: ["author1"],
+    //     secondAuthor: [],
+    //     thirdAuthor: [],
+    //     CCF: 'A',
+    //     status: 'notSubmit',
+    //     additional: []
+    // }
+]);
 const refreshPapers = () => {
     // const url = `/api/papers?id&doi`;
     // const token = localStorage.getItem('token') as string;
@@ -59,5 +70,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 添加一些自定义样式 */
+.el-header{
+    font-size: 40px;
+    margin-bottom: 40px;
+    margin-top: 10px;
+    font-weight: bold;
+}
 </style>
