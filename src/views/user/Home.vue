@@ -16,6 +16,7 @@ import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 
+
 const authStore = useAuthStore();
 const router = useRouter();
 const activeIndex = ref('1');
