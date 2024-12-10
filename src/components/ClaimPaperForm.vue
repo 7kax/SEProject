@@ -1,7 +1,7 @@
 <!-- 用户认领论文的表单 -->
 <template>
     <h1>论文认领</h1>
-    <div>请输入查询的DOI<input v-model="DOI"><el-button @click="queryPaperWithDOI">查找</el-button></div>
+    <div id="searchDiv">请输入查询的DOI<input id="searchInput" v-model="DOI"><el-button type="primary" @click="queryPaperWithDOI">查找</el-button></div>
     <el-table :data="papers" style="width: 100%">
         <el-table-column prop="DOI" label="DOI" width="120" sortable />
         <el-table-column prop="title" label="标题" width="120" sortable />
@@ -83,5 +83,12 @@ const claimPaper = (paper: Paper) => {
 </script>
 
 <style scoped>
-
+#searchDiv{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+#searchInput{
+    margin-left: 20px;
+    margin-right: 20px;
+}
 </style>
