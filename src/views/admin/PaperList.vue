@@ -59,8 +59,8 @@ const refreshPapers = () => {
 
     fetchPaper(params).then((res) => {
         papers.value = res.papers;
-    }).catch((err) => {
-        errorAlert(err.response.data.message);
+    }).catch((_err) => {
+        errorAlert('获取论文列表失败');
     });
 };
 onMounted(() => {
@@ -70,7 +70,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.el-header{
+.el-header {
     font-size: 40px;
     margin-bottom: 40px;
     margin-top: 10px;
