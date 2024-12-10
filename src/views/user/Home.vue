@@ -4,6 +4,7 @@
       <el-menu-item index="1" :route="{ path: '/user/paper_list' }">论文列表</el-menu-item>
       <el-menu-item index="2" :route="{ path: '/user/profile' }">个人信息</el-menu-item>
       <el-menu-item index="3" :route="{ path: '/user/paper_board' }">数据大屏</el-menu-item>
+      <el-menu-item index="4" :route="{ path: '/user/claim_paper' }">认领论文</el-menu-item>
       <el-menu-item @click="logout">登出</el-menu-item>
     </el-menu>
   </div>

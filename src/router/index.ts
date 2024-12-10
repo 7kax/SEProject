@@ -36,6 +36,12 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import('@/views/user/PaperList.vue'),
                 meta: { requiresAuth: true }
             },
+            {
+                path: 'claim_paper',
+                name: 'ClaimPaper',
+                component: () => import('@/views/user/ClaimPaper.vue'),
+                meta: { requiresAuth: true }
+            },
         ]
     },
     {
